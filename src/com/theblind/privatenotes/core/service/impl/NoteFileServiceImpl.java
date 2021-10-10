@@ -1,6 +1,5 @@
 package com.theblind.privatenotes.core.service.impl;
 
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IORuntimeException;
 import cn.hutool.core.io.file.FileReader;
 import cn.hutool.core.io.file.FileWriter;
@@ -19,18 +18,21 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class NoteFileServiceImpl implements NoteFileService {
 
 
     ConfigService configService = PrivateNotesFactory.getConfigService();
-
+    MD5 md5 = MD5.create();
+    Map<String,String> versionCache=new HashMap();
 
 
     @Override
     public NoteFile get(File file) {
+        if(!file.exists()){
+            return null;
+        }
         Config config = new Config();
         String fullName = file.getName();
         String[] split = fullName.split("\\.");
@@ -52,6 +54,12 @@ public class NoteFileServiceImpl implements NoteFileService {
     @Override
     public NoteFile get(String path) {
         return  get(new File(path));
+    }
+
+    public File getStorage(Config config,File file,String version){
+        String[] split = file.getName().split("\\.");
+        File noteFile = getAbsolutePath(config, split[0],split[1],version).toFile();
+        return noteFile;
     }
 
     @Override
@@ -94,7 +102,7 @@ public class NoteFileServiceImpl implements NoteFileService {
 
 
 
-    MD5 md5 = MD5.create();
+
 
     @Override
     public String generateVersion(Object... params) {
@@ -150,12 +158,14 @@ public class NoteFileServiceImpl implements NoteFileService {
 
     public Path getAbsolutePath(Config config, NoteFile noteFile) {
         String ruleName = fileNamingRules(noteFile);
-        return Paths.get(config.getUserSavePath(), index(ruleName), ruleName + ".txt");
+        //index(ruleName),
+        return Paths.get(config.getUserSavePath(),  ruleName + ".txt");
     }
 
     public Path getAbsolutePath(Config config, String fileName, String type, String version) {
         String ruleName = fileNamingRules(fileName, type, version);
-        return Paths.get(config.getUserSavePath(), index(ruleName), ruleName + ".txt");
+        //index(ruleName)
+        return Paths.get(config.getUserSavePath(),  ruleName + ".txt");
     }
 
     public String fileNamingRules(NoteFile noteFile) {
@@ -170,6 +180,45 @@ public class NoteFileServiceImpl implements NoteFileService {
     @Override
     public void saveNote(List<NoteFile> noteFileList) {
 
+    }
+
+
+    @Override
+    public void loadCache(String path) {
+        versionCache.put(path,generateVersion(path));
+    }
+
+    @Override
+    public void removeCache(String path) {
+
+    }
+
+    @Override
+    public void refreshVersion(String path, Object... params) {
+        Config config = new Config();
+        String version = generateVersion(path);
+        File file = new File(path);
+        File storage = getStorage(config, file,version);
+
+        File beforeFile;
+        String beforeVersion=null;
+
+        Path p1 = null;
+        //文件名修改
+        if(Objects.nonNull(params)&& params.length!=0){
+            String oldFileName = (String) params[0];
+            beforeVersion=version;
+            String[] split = oldFileName.split("\\.");
+            beforeFile=Paths.get(storage.getParent(), oldFileName).toFile();
+
+        }else {
+             beforeVersion = versionCache.get(path);
+             beforeFile=file;
+        }
+        versionCache.remove(beforeFile.getPath());
+        versionCache.put(path,version);
+        File oldStorage =getStorage(config, beforeFile,beforeVersion);
+        oldStorage.renameTo(storage);
     }
 
     public static void main(String[] args) {

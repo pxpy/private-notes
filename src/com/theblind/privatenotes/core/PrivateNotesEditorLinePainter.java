@@ -14,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import java.util.List;
 
@@ -26,33 +24,22 @@ public class PrivateNotesEditorLinePainter  extends EditorLinePainter {
     @Nullable
     @Override
     public Collection<LineExtensionInfo> getLineExtensions(@NotNull Project project, @NotNull VirtualFile virtualFile, int i) {
-        System.out.println(virtualFile.getCanonicalPath()+"----"+i);
-            String name = virtualFile.getName();
-            String presentableName = virtualFile.getPresentableName();
-            CharSequence nameSequence = virtualFile.getNameSequence();
-            FileType fileType = virtualFile.getFileType();
-            String fileTypeName = fileType.getName();
-            VirtualFile canonicalFile = virtualFile.getCanonicalFile();
-            String fullName = canonicalFile.getName();
-            String[] split = name.split(".");
-
-            FileReader fileReader = new FileReader(virtualFile.getPath());
-            byte[] bytes = fileReader.readBytes();
-            MD5 md5 = MD5.create();
-            String version = md5.digestHex16(bytes);
-
-           String note = noteFileService.getNote(virtualFile.getPath(), i);
-           if(Objects.isNull(note)){
-               return null;
-           }
-        Color hsbColor = JBColor.getHSBColor(0.0030674834f, 0.652f, 0.98039216f);
+        /*  Color hsbColor = JBColor.getHSBColor(0.0030674834f, 0.652f, 0.98039216f);*/
         List<LineExtensionInfo> result = new ArrayList<>();//✍
-
-        result.add(new LineExtensionInfo("  ◄ " ,
-                new TextAttributes(null, null, JBColor.blue, null, Font.PLAIN)));
-        result.add(new LineExtensionInfo(note,
-                new TextAttributes(null, null, JBColor.gray, null, Font.PLAIN)));
-        return result;
+        try {
+            String note = noteFileService.getNote(virtualFile.getPath(), i);
+            if(Objects.isNull(note)){
+                return null;
+            }
+            result.add(new LineExtensionInfo("  ◄ " ,
+                    new TextAttributes(null, null, JBColor.blue, null, Font.PLAIN)));
+            result.add(new LineExtensionInfo(note,
+                    new TextAttributes(null, null, JBColor.gray, null, Font.PLAIN)));
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return result;
+        }
     }
 
     public static void main(String[] args) {

@@ -1,5 +1,6 @@
 package com.theblind.privatenotes.action;
 
+import cn.hutool.core.io.FileUtil;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.nio.file.Files;
 
 public class AddNotesIntentionAction extends BaseIntentionAction {
 
@@ -28,11 +30,11 @@ public class AddNotesIntentionAction extends BaseIntentionAction {
 
     @Override
     public boolean startInWriteAction() {
-        return false;
+        return true;
     }
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
-        return   !noteFileService.noteExist(psiFile.getVirtualFile().getCanonicalPath(),
+        return  FileUtil.exist(psiFile.getVirtualFile().getCanonicalPath()) &&!noteFileService.noteExist(psiFile.getVirtualFile().getCanonicalPath(),
                                             editor.getDocument().getLineNumber(editor.getCaretModel().getOffset()));
     }
 

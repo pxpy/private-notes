@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -14,6 +15,7 @@ import com.intellij.psi.SyntheticElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.theblind.privatenotes.core.NoteFile;
+import com.theblind.privatenotes.core.util.PrivateNotesUtil;
 import com.theblind.privatenotes.ui.PrivateNotesEditor;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,14 +30,17 @@ public class AddNotesIntentionAction extends BaseIntentionAction {
         super("[Note] 添加私人注释");
     }
 
-    @Override
-    public boolean startInWriteAction() {
-        return true;
-    }
+
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
-        return  FileUtil.exist(psiFile.getVirtualFile().getCanonicalPath()) &&!noteFileService.noteExist(psiFile.getVirtualFile().getCanonicalPath(),
-                                            editor.getDocument().getLineNumber(editor.getCaretModel().getOffset()));
+        try {
+            VirtualFile virtualFile = psiFile.getVirtualFile();
+            return  FileUtil.exist(virtualFile.getCanonicalPath()) &&!noteFileService.noteExist(virtualFile.getCanonicalPath(),
+                                                editor.getDocument().getLineNumber(editor.getCaretModel().getOffset()),PrivateNotesUtil.getBytes(virtualFile.getInputStream()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public static PsiClass getTargetClass(@NotNull Editor editor, @NotNull PsiFile file) {
@@ -69,13 +74,13 @@ public class AddNotesIntentionAction extends BaseIntentionAction {
         balloon.addListener(new JBPopupListener() {
             @Override
             public void onClosed(@NotNull LightweightWindowEvent event) {
-                String canonicalPath = psiFile.getVirtualFile().getCanonicalPath();
-                NoteFile noteFile = new NoteFile();
-                noteFile.setVersion(noteFileService.generateVersion(canonicalPath));
-
-
-                noteFileService.saveNote(canonicalPath,lineNumber
-                       ,editorPane.getText());
+                VirtualFile virtualFile = psiFile.getVirtualFile();
+                try {
+                    noteFileService.saveNote(virtualFile.getCanonicalPath(),lineNumber
+                           ,editorPane.getText(), PrivateNotesUtil.getBytes(virtualFile.getInputStream()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 

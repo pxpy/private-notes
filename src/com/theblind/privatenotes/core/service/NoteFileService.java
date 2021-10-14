@@ -7,27 +7,28 @@ import java.util.List;
 
 public interface NoteFileService {
 
-    NoteFile get(File file);
-    NoteFile get(String path);
+    NoteFile get(File file,Object... params)throws Exception;
+    NoteFile get(String path,Object... params)throws Exception;
 
-    String getNote(File file,int lineNumber);
-    String getNote(String path, int lineNumber);
+    String getNote(File file,int lineNumber,Object... params)throws Exception;
+    String getNote(String path, int lineNumber,Object... params)throws Exception;
 
-    boolean exist(File file);
-    boolean exist(String path);
-    boolean noteExist(File file, int lineNumber);
-    boolean noteExist(String path, int lineNumber);
+    boolean exist(File file,Object... params);
+    boolean exist(String path,Object... params);
 
-    void saveNote(NoteFile noteFile);
-    void saveNote(String path, int lineNumber, String note);
-    void saveNote(File file, int lineNumber, String note);
+    boolean noteExist(File file, int lineNumber,Object... params)throws Exception;
+    boolean noteExist(String path, int lineNumber,Object... params)throws Exception;
+
+    void saveNote(NoteFile noteFile)throws Exception;
+    void saveNote(String path, int lineNumber, String note,Object... params)throws Exception;
+    void saveNote(File file, int lineNumber, String note,Object... params)throws Exception;
     void saveNote(List<NoteFile> noteFileList);
 
-    void loadCache(String path);
-    void removeCache(String path);
+    void loadCache(String path,Object... params)throws Exception;
+    void removeCache(String path,Object... params)throws Exception;
 
-    void refreshVersion(String path,Object... params);
-    String generateVersion(Object... params);
+    void refreshVersion(String path,Object... params)throws Exception;
+    String generateVersion(Object... params) throws Exception;
 
 
 }

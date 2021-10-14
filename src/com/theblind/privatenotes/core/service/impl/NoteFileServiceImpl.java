@@ -25,47 +25,42 @@ public class NoteFileServiceImpl implements NoteFileService {
 
     ConfigService configService = PrivateNotesFactory.getConfigService();
     MD5 md5 = MD5.create();
-    Map<String,String> versionCache=new HashMap();
+    Map<String, String> versionCache = new HashMap();
 
 
     @Override
-    public NoteFile get(File file) {
-        if(!file.exists()){
+    public NoteFile get(File file, Object... params) throws Exception {
+        if (!file.exists()) {
             return null;
         }
         Config config = new Config();
         String fullName = file.getName();
         String[] split = fullName.split("\\.");
-        File noteFile = getAbsolutePath(config, split[0],split[1],generateVersion(file.getAbsolutePath())).toFile();
-        try {
+        File noteFile = getAbsolutePath(config, split[0], split[1], generateVersion(file.getAbsolutePath())).toFile();
 
         if (noteFile.exists()) {
-
             FileReader fileReader = new FileReader(noteFile);
             return JSONUtil.toBean(fileReader.readString(), NoteFile.class);
         }
 
-        }catch (IORuntimeException exception){
-
-        }
         return null;
     }
 
     @Override
-    public NoteFile get(String path) {
-        return  get(new File(path));
+    public NoteFile get(String path, Object... params) throws Exception {
+        return get(new File(path), params);
     }
 
-    public File getStorage(Config config,File file,String version){
+    public File getStorage(Config config, File file, String version) {
         String[] split = file.getName().split("\\.");
-        File noteFile = getAbsolutePath(config, split[0],split[1],version).toFile();
+        File noteFile = getAbsolutePath(config, split[0], split[1], version).toFile();
         return noteFile;
     }
 
     @Override
-    public String getNote(File file, int lineNumber) {
-        NoteFile noteFile = get(file);
-        if(Objects.isNull(noteFile)){
+    public String getNote(File file, int lineNumber, Object... params) throws Exception {
+        NoteFile noteFile = get(file, params[0]);
+        if (Objects.isNull(noteFile)) {
             return null;
         }
         return noteFile.getNode(lineNumber);
@@ -73,59 +68,60 @@ public class NoteFileServiceImpl implements NoteFileService {
 
 
     @Override
-    public String getNote(String path, int lineNumber) {
-        return getNote(new File(path),lineNumber);
+    public String getNote(String path, int lineNumber, Object... params) throws Exception {
+        return getNote(new File(path), lineNumber, params);
     }
 
 
-
     @Override
-    public boolean exist(String path) {
-        return  exist(new File(path));
+    public boolean exist(String path, Object... params) {
+        return exist(new File(path), params);
     }
 
     @Override
-    public boolean exist(File file) {
+    public boolean exist(File file, Object... params) {
         return false;
     }
 
 
     @Override
-    public boolean noteExist(File file, int lineNumber) {
-        return getNote(file,lineNumber)==null?false:true;
+    public boolean noteExist(File file, int lineNumber, Object... params) throws Exception {
+        return getNote(file, lineNumber, params) == null ? false : true;
     }
 
     @Override
-    public boolean noteExist(String path, int lineNumber) {
-        return noteExist(new File(path), lineNumber);
-    }
-
-
-
-
-
-    @Override
-    public String generateVersion(Object... params) {
-        String path = (String) params[0];
-        byte[] bytes = new FileReader(path).readBytes();
-        return  md5.digestHex16(bytes);
+    public boolean noteExist(String path, int lineNumber, Object... params) throws Exception {
+        return noteExist(new File(path), lineNumber, params);
     }
 
 
     @Override
-    public void saveNote(NoteFile noteFile) {
+    public String generateVersion(Object... params) throws Exception {
+        if (!(params[0] instanceof String)) {
+            throw new RuntimeException("params[0] not instanceof String");
+        }
+        if (!(params[1] instanceof byte[])) {
+            throw new RuntimeException("params[1] not instanceof byte[]");
+        }
+
+        File file = (File) params[0];
+
+        if (file.exists()) {
+            return md5.digestHex16(file);
+        } else {
+            return md5.digestHex16((byte[]) params[1]);
+        }
+    }
+
+
+    @Override
+    public void saveNote(NoteFile noteFile) throws Exception {
         Config config = new Config();
 
         if (StringUtil.isEmpty(config.getMail())) {
-            Path defaultUserSavePath = Paths.get(System.getProperty("user.home"), "privateNotes", "default");
-            File defaultUserSaveFile = defaultUserSavePath.toFile();
             File file = getAbsolutePath(config, noteFile).toFile();
             if (!file.exists()) {
-                try {
-                    file.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                file.createNewFile();
             }
 
             FileWriter fileWriter = new FileWriter(file);
@@ -136,38 +132,45 @@ public class NoteFileServiceImpl implements NoteFileService {
 
 
     @Override
-    public void saveNote(String path, int lineNumber, String note) {
-        this.saveNote(new File(path),lineNumber,note);
+    public void saveNote(String path, int lineNumber, String note, Object... params) throws Exception {
+        this.saveNote(new File(path), lineNumber, note, params);
+
     }
 
     @Override
-    public void saveNote(File file, int lineNumber, String note) {
+    public void saveNote(File file, int lineNumber, String note, Object... params) throws Exception {
         NoteFile noteFile = get(file);
-       if(Objects.isNull(noteFile)){
-           noteFile=new NoteFile();
-           String fileName = file.getName();
-           String[] split = fileName.split("\\.");
-           noteFile.setFileName(fileName);
-           noteFile.setFileType(split[1]);
-           noteFile.setFileSimpleName(split[0]);
-           noteFile.setVersion(generateVersion(file.getAbsolutePath()));
-       }
-        noteFile.setNode(lineNumber,note);
+        if (Objects.isNull(noteFile)) {
+            noteFile = new NoteFile();
+            String fileName = file.getName();
+            String[] split = fileName.split("\\.");
+            noteFile.setFileName(fileName);
+            noteFile.setFileType(split[1]);
+            noteFile.setFileSimpleName(split[0]);
+            noteFile.setVersion(generateVersion(file.getAbsolutePath(), params[0]));
+        }
+        noteFile.setNode(lineNumber, note);
         saveNote(noteFile);
     }
 
     public Path getAbsolutePath(Config config, NoteFile noteFile) {
         String ruleName = fileNamingRules(noteFile);
         //index(ruleName),
-        return Paths.get(config.getUserSavePath(),  ruleName + ".txt");
+        return Paths.get(config.getUserSavePath(), ruleName + ".txt");
     }
 
     public Path getAbsolutePath(Config config, String fileName, String type, String version) {
         String ruleName = fileNamingRules(fileName, type, version);
         //index(ruleName)
-        return Paths.get(config.getUserSavePath(),  ruleName + ".txt");
+        return Paths.get(config.getUserSavePath(), ruleName + ".txt");
     }
 
+    /**
+     * 根据规则 生成文件名称
+     *
+     * @param noteFile
+     * @return
+     */
     public String fileNamingRules(NoteFile noteFile) {
         return fileNamingRules(noteFile.getFileSimpleName(), noteFile.getFileType(), noteFile.getVersion());
     }
@@ -184,69 +187,53 @@ public class NoteFileServiceImpl implements NoteFileService {
 
 
     @Override
-    public void loadCache(String path) {
-        versionCache.put(path,generateVersion(path));
+    public void loadCache(String path, Object... params) throws Exception {
+        versionCache.put(path, generateVersion(new File(path), params[0]));
     }
 
     @Override
-    public void removeCache(String path) {
+    public void removeCache(String path, Object... params) {
 
     }
 
     @Override
-    public void refreshVersion(String path, Object... params) {
+    public void refreshVersion(String path, Object... params) throws Exception {
         Config config = new Config();
-        String version = generateVersion(path);
         File file = new File(path);
-        File storage = getStorage(config, file,version);
+        String version = generateVersion(path, params[0]);
+        File storage = getStorage(config, file, version);
 
-        File beforeFile;
-        String beforeVersion=null;
+        File beforeFile = null;
+        String beforeVersion = null;
 
-        Path p1 = null;
         //文件名修改
-        if(Objects.nonNull(params)&& params.length!=0){
+        if (Objects.nonNull(params) && params.length != 0) {
             String oldFileName = (String) params[0];
-            beforeVersion=version;
+            beforeVersion = version;
             String[] split = oldFileName.split("\\.");
-            beforeFile=Paths.get(storage.getParent(), oldFileName).toFile();
+            beforeFile = Paths.get(storage.getParent(), oldFileName).toFile();
 
-        }else {
-             beforeVersion = versionCache.get(path);
-             beforeFile=file;
+        } else {
+            //文件内容改变
+            beforeVersion = versionCache.get(path);
+            beforeFile = file;
         }
+
         versionCache.remove(beforeFile.getPath());
-        versionCache.put(path,version);
-        File oldStorage =getStorage(config, beforeFile,beforeVersion);
+        versionCache.put(path, version);
+
+        File oldStorage = getStorage(config, beforeFile, beforeVersion);
         oldStorage.renameTo(storage);
+
+        NoteFile noteFile = get(file, params);
+        noteFile.setVersion(version);
+        try {
+            saveNote(noteFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void main(String[] args) {
-        NoteFileServiceImpl noteFileService = new NoteFileServiceImpl();
-        NoteFile noteFile = new NoteFile();
-        noteFile.setFileName("Test.java");
-        noteFile.setFileType("java");
-        noteFile.setFileSimpleName("Test");
-        noteFile.setVersion("asdasdadasdad");
-        noteFileService.saveNote(noteFile);
-
-        //NoteFile noteFile1 = noteFileService.get(noteFile.getFileSimpleName(), noteFile.getFileType(), noteFile.getVersion());
-        //System.out.println(JSONUtil.toJsonStr(noteFile1));
-
-       /* final int[] HASH_INCREMENT = {0x61c88647};
-        int size = 5;
-        int i = "F.Java".hashCode();
-        List<String> strings = Arrays.asList("F.java", "NoteFileServiceImpl.java", "NoteFileService.Java", "main.java","main.java","A","String.java","StringUtils.java");
-        strings.stream().forEach((v) -> {
-
-            int hashCode = hash(v);
-            int idx = hashCode & 6;
-            System.out.println("斐波那契散列：" + idx + " 普通散列：" + (String.valueOf(v).hashCode() & 6));
-            HASH_INCREMENT[0] = HASH_INCREMENT[0] + HASH_INCREMENT[0];
-        });*/
-
-
-    }
 
     int hash(String key) {
         int h;

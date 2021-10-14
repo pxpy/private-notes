@@ -43,6 +43,8 @@
     <projectListeners>
         <listener class="com.theblind.privatenotes.core.PrivateNotesFileEditorManagerListener"
                   topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+
+        <listener class="privatenotes.core.PrivateNotesBulkFileListener" topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
     </projectListeners>
   <actions>
     <group id="Test-Group-id" text="Test-Group" >

@@ -24,13 +24,16 @@
 
         <!--intentionAction 相关-->
         <intentionAction>
-            <className>com.theblind.privatenotes.action.AddNotesIntentionAction</className>
+            <className>com.theblind.privatenotes.action.AddNoteIntentionAction</className>
         </intentionAction>
         <intentionAction>
-            <className>com.theblind.privatenotes.action.EditNotesIntentionAction</className>
+            <className>com.theblind.privatenotes.action.EditNoteIntentionAction</className>
         </intentionAction>
         <intentionAction>
-            <className>com.theblind.privatenotes.action.DeleteNotesIntentionAction</className>
+            <className>com.theblind.privatenotes.action.DeleteNoteIntentionAction</className>
+        </intentionAction>
+        <intentionAction>
+            <className>com.theblind.privatenotes.action.WrapNoteIntentionAction</className>
         </intentionAction>
 
         <!--行尾拓展-->

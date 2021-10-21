@@ -163,32 +163,7 @@ public class NoteFileServiceImpl implements NoteFileService {
         saveNote(noteFile);
     }
 
-    public Path getAbsolutePath(Config config, NoteFile noteFile) {
-        String ruleName = fileNamingRules(noteFile);
-        //index(ruleName),
-        return Paths.get(config.getUserSavePath(), ruleName + ".txt");
-    }
 
-    public Path getAbsolutePath(Config config, String fileName, String version) {
-        String[] split = fileName.split("\\.");
-        String ruleName = fileNamingRules(split[0], split[1], version);
-        //index(ruleName)
-        return Paths.get(config.getUserSavePath(), ruleName + ".txt");
-    }
-
-    /**
-     * 根据规则 生成文件名称
-     *
-     * @param noteFile
-     * @return
-     */
-    public String fileNamingRules(NoteFile noteFile) {
-        return fileNamingRules(noteFile.getFileSimpleName(), noteFile.getFileType(), noteFile.getVersion());
-    }
-
-    public String fileNamingRules(String fileName, String type, String version) {
-        return fileName + type + version;
-    }
 
 
     @Override
@@ -221,6 +196,15 @@ public class NoteFileServiceImpl implements NoteFileService {
     }
 
     @Override
+    public void wrapNote(String path, int lineNumber, Object... params) throws Exception {
+        NoteFile noteFile = get(path, params);
+        String node = noteFile.getNode(lineNumber);
+        noteFile.removeNode(lineNumber);
+        noteFile.setNode(++lineNumber,node);
+        saveNote(noteFile);
+    }
+
+    @Override
     public void updateVersion(String path, Object... params) throws Exception {
         Config config = configService.get();
         File file = new File(path);
@@ -235,32 +219,50 @@ public class NoteFileServiceImpl implements NoteFileService {
 
 
         oldStorage.renameTo(storage);
-
         NoteFile noteFile = get(file, params);
         noteFile.setVersion(version);
-        try {
-            saveNote(noteFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        saveNote(noteFile);
     }
 
     @Override
     public void updateFileName(String nowPath, String oldFileName, Object... params) throws Exception {
         Config config = configService.get();
+
         File file = new File(nowPath);
-
-
         String version = generateVersionByCache(file);
-
         File nowStorageFile = getAbsolutePath(config, file.getName(), version).toFile();
-
         Path path = Paths.get(nowStorageFile.getParent(), oldFileName);
         File beforeFile = path.toFile();
-
         File oldStorage = getStorage(config, beforeFile, version);
         oldStorage.renameTo(nowStorageFile);
+    }
 
+
+    public Path getAbsolutePath(Config config, NoteFile noteFile) {
+        String ruleName = fileNamingRules(noteFile);
+        //index(ruleName),
+        return Paths.get(config.getUserSavePath(), ruleName + ".txt");
+    }
+
+    public Path getAbsolutePath(Config config, String fileName, String version) {
+        String[] split = fileName.split("\\.");
+        String ruleName = fileNamingRules(split[0], split[1], version);
+        //index(ruleName)
+        return Paths.get(config.getUserSavePath(), ruleName + ".txt");
+    }
+
+    /**
+     * 根据规则 生成文件名称
+     *
+     * @param noteFile
+     * @return
+     */
+    public String fileNamingRules(NoteFile noteFile) {
+        return fileNamingRules(noteFile.getFileSimpleName(), noteFile.getFileType(), noteFile.getVersion());
+    }
+
+    public String fileNamingRules(String fileName, String type, String version) {
+        return fileName + type + version;
     }
 
     int hash(String key) {

@@ -14,49 +14,43 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class EditNotesIntentionAction extends BaseIntentionAction {
+/**
+ *换行
+ */
+public class WrapNoteIntentionAction extends BaseIntentionAction {
 
-    public EditNotesIntentionAction() {
-        super("[Note] 编辑私人注释");
+    public WrapNoteIntentionAction() {
+        super("[Note] 换行");
     }
 
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         try {
-            return noteFileService.noteExist(psiFile.getVirtualFile().getCanonicalPath(),
-                    editor.getDocument().getLineNumber(editor.getCaretModel().getOffset()), PrivateNotesUtil.getBytes(psiFile.getVirtualFile().getInputStream()));
+            VirtualFile virtualFile = psiFile.getVirtualFile();
+            return noteFileService.noteExist(virtualFile.getCanonicalPath(),
+                    editor.getDocument().getLineNumber(editor.getCaretModel().getOffset()), IdeaApiUtil.getBytes(virtualFile));
         } catch (Exception e) {
-            e.printStackTrace();
+            PrivateNotesUtil.errLog(e, project);
         }
         return false;
     }
 
+
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         PrivateNotesEditorForm remarkEditor = new PrivateNotesEditorForm();
+
         JEditorPane editorPane = remarkEditor.getEditorPane1();
-        VirtualFile virtualFile = psiFile.getVirtualFile();
         Integer selLineNumber = IdeaApiUtil.getSelLineNumber(editor);
+        VirtualFile virtualFile = psiFile.getVirtualFile();
         try {
-            editorPane.setText(noteFileService.getNote(virtualFile.getCanonicalPath(),
-                    selLineNumber,
-                    IdeaApiUtil.getBytes(virtualFile)));
+            noteFileService.wrapNote(virtualFile.getCanonicalPath(), selLineNumber
+                    , IdeaApiUtil.getBytes(virtualFile));
         } catch (Exception e) {
             PrivateNotesUtil.errLog(e, project);
         }
-
-        IdeaApiUtil.showBalloon(editorPane, myText, new JBPopupListener() {
-            @Override
-            public void onClosed(@NotNull LightweightWindowEvent event) {
-                try {
-                    noteFileService.saveNote(virtualFile.getCanonicalPath(),
-                            selLineNumber, editorPane.getText(), PrivateNotesUtil.getBytes(virtualFile.getInputStream()));
-                } catch (Exception e) {
-                    PrivateNotesUtil.errLog(e, project);
-                }
-            }
-        }, editor);
         editorPane.requestFocus();
+
     }
 }

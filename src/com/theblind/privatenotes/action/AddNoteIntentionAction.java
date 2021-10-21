@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class AddNotesIntentionAction extends BaseIntentionAction {
+public class AddNoteIntentionAction extends BaseIntentionAction {
 
-    public AddNotesIntentionAction() {
+    public AddNoteIntentionAction() {
         super("[Note] 添加私人注释");
     }
 

@@ -39,6 +39,8 @@ public interface NoteFileService {
 
     void removeCache(String path, Object... params) throws Exception;
 
+    void wrapNote(String path, int lineNumber,  Object... params)throws Exception;
+
     void updateVersion(String path, Object... params) throws Exception;
 
     void updateFileName(String nowPath, String oldFileName, Object... params) throws Exception;

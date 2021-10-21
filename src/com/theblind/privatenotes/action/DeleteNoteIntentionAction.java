@@ -9,9 +9,9 @@ import com.theblind.privatenotes.core.util.IdeaApiUtil;
 import com.theblind.privatenotes.core.util.PrivateNotesUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class DeleteNotesIntentionAction extends BaseIntentionAction {
+public class DeleteNoteIntentionAction extends BaseIntentionAction {
 
-    public DeleteNotesIntentionAction() {
+    public DeleteNoteIntentionAction() {
         super("[Note] 删除私人注释");
     }
 

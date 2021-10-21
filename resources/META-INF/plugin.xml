@@ -1,55 +1,57 @@
 <idea-plugin>
-  <id>com.your.company.unique.plugin.id</id>
-  <name>Plugin display name here</name>
-  <version>1.0</version>
-  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <id>TheBlind.privateNotes</id>
+    <name>Private Notes</name>
+    <version>1.0</version>
+    <vendor email="1043193478@qq.com" url="https://gitee.com/Lovxy">TheBlind</vendor>
 
-  <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+    <description><![CDATA[
+       你还在为项目中不敢添加 "敏感注释"!<br>
+       源码是只读文件不能添加注释而烦恼吗？<br>
+       <li>在任何你想加注释的地方 按下<em>Alt + Enter</em>鼠标移出点击即可保存</li>
+       <li>已有私人注释 按下<em>Alt + Enter</em>即可编辑和删除</li>
     ]]></description>
 
-  <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
-    ]]>
-  </change-notes>
 
-  <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="193.0"/>
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="193.0"/>
 
-  <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-       on how to target different products -->
-  <depends>com.intellij.modules.platform</depends>
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
 
-  <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
+    <extensions defaultExtensionNs="com.intellij">
 
-<editor.linePainter implementation="com.theblind.privatenotes.core.PrivateNotesEditorLinePainter"/>
+        <!--intentionAction 相关-->
+        <intentionAction>
+            <className>com.theblind.privatenotes.action.AddNotesIntentionAction</className>
+        </intentionAction>
+        <intentionAction>
+            <className>com.theblind.privatenotes.action.EditNotesIntentionAction</className>
+        </intentionAction>
+        <intentionAction>
+            <className>com.theblind.privatenotes.action.DeleteNotesIntentionAction</className>
+        </intentionAction>
 
-    <intentionAction>
-      <className>com.theblind.privatenotes.action.AddNotesIntentionAction</className>
-    </intentionAction>
-      <intentionAction>
-          <className>com.theblind.privatenotes.action.EditNotesIntentionAction</className>
-      </intentionAction>
-    <intentionAction>
-      <className>com.theblind.privatenotes.action.DeleteNotesIntentionAction</className>
-    </intentionAction>
+        <!--行尾拓展-->
+        <editor.linePainter implementation="com.theblind.privatenotes.core.listener.PrivateNotesEditorLinePainter"/>
+        <!--config-->
+        <applicationService
+                serviceImplementation="com.theblind.privatenotes.core.service.impl.ConfigServiceImpl$ConfigPersistenceThroughIdea"/>
 
-      <psi.treeChangeListener implementation="com.theblind.privatenotes.core.PrivateNotesFileChangeListener"/>
-  </extensions>
+        <applicationConfigurable
+                instance="com.theblind.privatenotes.ui.GonfigForm"/>
 
+        <psi.treeChangeListener
+                implementation="com.theblind.privatenotes.core.listener.PrivateNotesFileChangeListener"/>
+    </extensions>
+
+    <!--文件监听-->
     <projectListeners>
-        <listener class="com.theblind.privatenotes.core.PrivateNotesFileEditorManagerListener"
+        <listener class="com.theblind.privatenotes.core.listener.PrivateNotesFileEditorManagerListener"
                   topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
 
-        <listener class="privatenotes.core.PrivateNotesBulkFileListener" topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
+        <listener class="com.theblind.privatenotes.core.listener.PrivateNotesBulkFileListener"
+                  topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
     </projectListeners>
-  <actions>
-    <group id="Test-Group-id" text="Test-Group" >
-    </group>
-    <!-- Add your actions here -->
-  </actions>
 
 </idea-plugin>

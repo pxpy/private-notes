@@ -7,24 +7,34 @@ import com.theblind.privatenotes.core.service.ConfigService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 
 public class ConfigServiceImpl implements ConfigService {
+
+    volatile Config configCache = null;
+
     @Override
     public Config get() {
-        ConfigPersistenceThroughIdea persistence = ServiceManager.getService(ConfigPersistenceThroughIdea.class);
-        return persistence.getConfig();
+        if (Objects.isNull(configCache)) {
+            ConfigPersistenceThroughIdea persistence = ServiceManager.getService(ConfigPersistenceThroughIdea.class);
+            configCache = persistence.getConfig();
+        }
+        return configCache;
     }
 
     @Override
     public void save(Config config) {
         ConfigPersistenceThroughIdea persistence = ServiceManager.getService(ConfigPersistenceThroughIdea.class);
         persistence.setConfig(config);
+        configCache = config;
     }
 
-    @State(name="Config",storages = {@Storage(value = "privateNotes-config.xml",
+
+    @State(name = "Config", storages = {@Storage(value = "privateNotes-config.xml",
             roamingType = RoamingType.DISABLED)})
-    static class  ConfigPersistenceThroughIdea implements PersistentStateComponent<ConfigPersistenceThroughIdea>{
-        Config config;
+    public static class ConfigPersistenceThroughIdea implements PersistentStateComponent<ConfigPersistenceThroughIdea> {
+        private Config config = new Config();
 
         public Config getConfig() {
             return config;
@@ -42,19 +52,9 @@ public class ConfigServiceImpl implements ConfigService {
 
         @Override
         public void loadState(@NotNull ConfigPersistenceThroughIdea configPersistenceThroughIdea) {
-            XmlSerializerUtil.copyBean(configPersistenceThroughIdea,this);
+            XmlSerializerUtil.copyBean(configPersistenceThroughIdea, this);
         }
-
-
-
     }
-
-
-
-
-
-
-
 
 
 }

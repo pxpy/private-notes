@@ -8,7 +8,7 @@ import com.theblind.privatenotes.core.service.impl.NoteFileServiceImpl;
 
 public class PrivateNotesFactory {
 
-    String DEFAULT_USER_Folder="default";
+
     private static final ConfigService CONFIG_SERVICE=new ConfigServiceImpl();
     private static final NoteFileService NOTE_FILE_SERVICE=new NoteFileServiceImpl();
 

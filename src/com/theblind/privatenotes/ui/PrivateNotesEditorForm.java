@@ -2,7 +2,7 @@ package com.theblind.privatenotes.ui;
 
 import javax.swing.*;
 
-public class PrivateNotesEditor {
+public class PrivateNotesEditorForm {
     private JEditorPane editorPane1;
     private JPanel panel1;
 

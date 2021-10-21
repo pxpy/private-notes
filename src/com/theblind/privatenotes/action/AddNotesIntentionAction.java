@@ -1,28 +1,18 @@
 package com.theblind.privatenotes.action;
 
-import cn.hutool.core.io.FileUtil;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.Balloon;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.SyntheticElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
-import com.theblind.privatenotes.core.NoteFile;
+import com.theblind.privatenotes.core.util.IdeaApiUtil;
 import com.theblind.privatenotes.core.util.PrivateNotesUtil;
-import com.theblind.privatenotes.ui.PrivateNotesEditor;
+import com.theblind.privatenotes.ui.PrivateNotesEditorForm;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.nio.file.Files;
 
 public class AddNotesIntentionAction extends BaseIntentionAction {
 
@@ -35,167 +25,34 @@ public class AddNotesIntentionAction extends BaseIntentionAction {
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         try {
             VirtualFile virtualFile = psiFile.getVirtualFile();
-            return  FileUtil.exist(virtualFile.getCanonicalPath()) &&!noteFileService.noteExist(virtualFile.getCanonicalPath(),
-                                                editor.getDocument().getLineNumber(editor.getCaretModel().getOffset()),PrivateNotesUtil.getBytes(virtualFile.getInputStream()));
+            return !noteFileService.noteExist(virtualFile.getCanonicalPath(),
+                    editor.getDocument().getLineNumber(editor.getCaretModel().getOffset()), IdeaApiUtil.getBytes(virtualFile));
         } catch (Exception e) {
-            e.printStackTrace();
+            PrivateNotesUtil.errLog(e, project);
         }
         return false;
     }
 
-    public static PsiClass getTargetClass(@NotNull Editor editor, @NotNull PsiFile file) {
-        int offset = editor.getCaretModel().getOffset();
-        PsiElement element = file.findElementAt(offset);
-        if (element != null) {
-            // 当前类
-            PsiClass target = PsiTreeUtil.getParentOfType(element, PsiClass.class);
-
-            return target instanceof SyntheticElement ? null : target;
-            // asdasd
-        }
-        return null;
-    }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
-        System.out.println("进来了");
-        final PrivateNotesEditor remarkEditor = new PrivateNotesEditor();
+        PrivateNotesEditorForm remarkEditor = new PrivateNotesEditorForm();
 
-        final JEditorPane editorPane = remarkEditor.getEditorPane1();
-
-
-        final JBPopupFactory popupFactory = JBPopupFactory.getInstance();
-        final Balloon balloon = popupFactory.createDialogBalloonBuilder(remarkEditor.getPanel1(), myText)
-                .setHideOnClickOutside(true)
-                .setDialogMode(true)
-                .setRequestFocus(true)
-                .createBalloon();
-        int lineNumber = editor.getDocument().getLineNumber(editor.getCaretModel().getOffset());
-        balloon.addListener(new JBPopupListener() {
+        JEditorPane editorPane = remarkEditor.getEditorPane1();
+        Integer selLineNumber = IdeaApiUtil.getSelLineNumber(editor);
+        IdeaApiUtil.showBalloon(editorPane, myText, new JBPopupListener() {
             @Override
             public void onClosed(@NotNull LightweightWindowEvent event) {
                 VirtualFile virtualFile = psiFile.getVirtualFile();
                 try {
-                    noteFileService.saveNote(virtualFile.getCanonicalPath(),lineNumber
-                           ,editorPane.getText(), PrivateNotesUtil.getBytes(virtualFile.getInputStream()));
+                    noteFileService.saveNote(virtualFile.getCanonicalPath(), selLineNumber
+                            , editorPane.getText(), IdeaApiUtil.getBytes(virtualFile));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    PrivateNotesUtil.errLog(e, project);
                 }
             }
-        });
-
-        balloon.show(popupFactory.guessBestPopupLocation(editor), Balloon.Position.below);
+        }, editor);
         editorPane.requestFocus();
-
-
-
-     /*   editorPane.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                // Skipped.
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                // Skipped.
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == 27) {
-
-                    //if (StrUtil.isEmpty()) return; // Skipped.
-
-                    String canonicalPath = psiFile.getVirtualFile().getCanonicalPath();
-                    NoteFile noteFile = new NoteFile();
-                    noteFile.setVersion(noteFileService.generateVersion(canonicalPath));
-
-
-                    noteFileService.saveNote(canonicalPath,
-                            editor.getDocument().getLineNumber(editor.getCaretModel().getOffset()),editorPane.getText());
-
-                    balloon.hide();
-                }
-            }
-        });*/
-
-
-
-
-
-       /* ActionGroup actionGroup = new ActionGroup() {
-            @NotNull
-            @Override
-            public AnAction[] getChildren(@Nullable AnActionEvent anActionEvent) {
-                AnAction anAction = new AnAction() {
-
-                    @Override
-                    public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
-
-                    }
-                };
-                return new AnAction[0];
-            }
-        };
-*/
-        // 获取plugin.xml配置的事件组
-      //  DefaultActionGroup group = (DefaultActionGroup) ActionManager.getInstance().getAction("Test-Group-id");
-// 清空所有事件
-       // group.removeAll();
-// 添加一个事件AnAction
-      /*  group.add(new AnAction("新增") {
-            @Override
-            public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
-                System.out.println("this is new Anaction.....");
-                final JBPopupFactory popupFactory = JBPopupFactory.getInstance();
-                final Balloon balloon = popupFactory.createDialogBalloonBuilder(remarkEditor.getPanel1(), myText)
-                        .setFadeoutTime(5000)
-                        .setDialogMode(true)
-                        .setRequestFocus(true)
-                        .createBalloon();
-
-                balloon.show(popupFactory.guessBestPopupLocation(editor), Balloon.Position.below);
-                editorPane.requestFocus();
-
-
-
-                editorPane.addKeyListener(new KeyListener() {
-                    final long interval = 300;
-                    long prev = System.currentTimeMillis();
-
-                    @Override
-                    public void keyTyped(KeyEvent e) {
-                        // Skipped.
-                    }
-
-                    @Override
-                    public void keyPressed(KeyEvent e) {
-                        // Skipped.
-                    }
-
-                    @Override
-                    public void keyReleased(KeyEvent e) {
-                        System.out.println("hahah");
-                        if (e.getKeyCode() == 27) {
-                            if (System.currentTimeMillis() - prev < interval)
-                                balloon.hide(); // Two consecutive times
-                            prev = System.currentTimeMillis();
-                            //if (StrUtil.isEmpty(editorPane.getText())) return; // Skipped.
-
-                            balloon.hide();
-                        }
-                    }
-                });
-            }
-        });*/
-// 获取工程的选项对象ListPoup
-     //   JBPopupFactory popupFactory = JBPopupFactory.getInstance();
-       // ListPopup myPopup = JBPopupFactory.getInstance().createActionGroupPopup("MyPopup", group, e.getDataContext(),
-       //         JBPopupFactory.ActionSelectionAid.SPEEDSEARCH, false);
-// ListPopub的显示位置，showCenteredInCurrentWindow当前窗口中间弹出，showInCenterOf在一个组件中间弹出
-
-//        myPopup.showInCenterOf(component);
-
 
     }
 }

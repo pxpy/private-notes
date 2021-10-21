@@ -3,14 +3,10 @@ package com.theblind.privatenotes.core;
 
 import cn.hutool.core.util.StrUtil;
 
+import java.awt.*;
 import java.io.File;
 
 public class Config {
-
-
-    public static final String ROOT_PATH = System.getProperty("user.home") + File.separator + ".privateNotes";
-    public static final String DEFAULT_USER_PATH = ROOT_PATH + File.separator + "default";
-
     final String rootPath = System.getProperty("user.home") + File.separator + ".privateNotes";
     final String defaultUserPath = rootPath + File.separator + "default";
 
@@ -22,23 +18,32 @@ public class Config {
     /**
      * 邮箱  用于 登录账号
      */
-    String mail;
+    String email;
 
     /**
-     * 默认颜色
+     * 注释颜色
      */
-    String defaultColor;
+    String noteColor="128,128,128,255";
 
     /**
-     * 默认字体
+     * 注释字体
      */
-    String defaultFont;
+    String noteFont;
 
+    /**
+     * 私人注释标记
+     */
+    String mark = "◄";
 
+    /**
+     *标记颜色
+     */
+    String markColor = "0,0,255,255";
+    
 
 
     public String getUserSavePath() {
-        return StrUtil.isEmpty(mail) ? defaultUserPath:(rootPath + File.separator + mail);
+        return StrUtil.isEmpty(email) ? defaultUserPath : (rootPath + File.separator + email);
     }
 
     public boolean isSyncEnabled() {
@@ -49,27 +54,52 @@ public class Config {
         this.syncEnabled = syncEnabled;
     }
 
-    public String getMail() {
-        return mail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getDefaultColor() {
-        return defaultColor;
+    public String getNoteColor() {
+        return noteColor;
     }
 
-    public void setDefaultColor(String defaultColor) {
-        this.defaultColor = defaultColor;
+    public void setNoteColor(String noteColor) {
+        this.noteColor = noteColor;
     }
 
-    public String getDefaultFont() {
-        return defaultFont;
+    public String getNoteFont() {
+        return noteFont;
     }
 
-    public void setDefaultFont(String defaultFont) {
-        this.defaultFont = defaultFont;
+    public void setNoteFont(String noteFont) {
+        this.noteFont = noteFont;
+    }
+
+    public String getMark() {
+        return mark;
+    }
+
+    public void setMark(String mark) {
+        this.mark = mark;
+    }
+
+    public String getMarkColor() {
+        return markColor;
+    }
+
+    public void setMarkColor(String markColor) {
+        this.markColor = markColor;
+    }
+
+    public static Color asColor(final String color) {
+        final String[] rgb = color.split(",");
+        return new Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]), Integer.parseInt(rgb[3]));
+    }
+
+    public static String byColor(final Color color) {
+        return String.format("%d,%d,%d,%d", color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
 }

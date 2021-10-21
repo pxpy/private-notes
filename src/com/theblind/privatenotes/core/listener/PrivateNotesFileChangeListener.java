@@ -1,17 +1,17 @@
-package com.theblind.privatenotes.core;
+package com.theblind.privatenotes.core.listener;
 
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiTreeChangeEvent;
 import com.intellij.psi.PsiTreeChangeListener;
 import com.intellij.psi.impl.source.PsiFileImpl;
+import com.theblind.privatenotes.core.PrivateNotesFactory;
 import com.theblind.privatenotes.core.service.NoteFileService;
 import org.jetbrains.annotations.NotNull;
 
 public class PrivateNotesFileChangeListener implements PsiTreeChangeListener {
 
 
-
     NoteFileService noteFileService = PrivateNotesFactory.getNoteFileService();
+
     @Override
     public void beforeChildAddition(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
 
@@ -59,11 +59,7 @@ public class PrivateNotesFileChangeListener implements PsiTreeChangeListener {
 
     @Override
     public void childrenChanged(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        System.out.println(Thread.currentThread().getName());
-        psiTreeChangeEvent.getFile().clearCaches();
-        psiTreeChangeEvent.getFile().getVirtualFile().getBOM();
-        noteFileService.refreshVersion(psiTreeChangeEvent.getFile().getVirtualFile().getCanonicalPath());
-    }
+        }
 
     @Override
     public void childMoved(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
@@ -73,17 +69,6 @@ public class PrivateNotesFileChangeListener implements PsiTreeChangeListener {
 
     @Override
     public void propertyChanged(@NotNull PsiTreeChangeEvent psiTreeChangeEvent) {
-        //修改文件名称时
-        if ("fileName".equals(psiTreeChangeEvent.getPropertyName())) {
-            System.out.println(Thread.currentThread().getName());
-            psiTreeChangeEvent.getSource();
-            psiTreeChangeEvent.getOldValue();
-
-            PsiFileImpl element = (PsiFileImpl) psiTreeChangeEvent.getElement();
-           String newPath=element.getViewProvider().getVirtualFile().getCanonicalPath();
-
-            noteFileService.refreshVersion(newPath,psiTreeChangeEvent.getOldValue());
-        }
 
     }
 }

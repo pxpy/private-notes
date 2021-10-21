@@ -11,7 +11,7 @@ public class NoteFile {
     private String fileName;
     private String fileSimpleName;
     private String fileType;
-    private Map<Integer,String> notes;
+    private Map<Integer, String> notes;
 
 
     public String getVersion() {
@@ -54,17 +54,24 @@ public class NoteFile {
         this.notes = notes;
     }
 
-    public String getNode(int lineNumber){
+    public String getNode(int lineNumber) {
         if (Objects.isNull(notes)) {
             return null;
         }
         return notes.get(lineNumber);
     }
-    public void setNode(int lineNumber,String content){
+
+    public void setNode(int lineNumber, String content) {
         if (Objects.isNull(notes)) {
-            notes=new HashMap<>();
+            notes = new HashMap<>();
         }
-        notes.put(lineNumber,content);
+        notes.put(lineNumber, content);
+    }
+
+    public void removeNode(int lineNumber) {
+        if (Objects.nonNull(notes)) {
+            notes.remove(lineNumber);
+        }
     }
 
 }

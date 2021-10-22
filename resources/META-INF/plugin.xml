@@ -5,8 +5,13 @@
     <vendor email="1043193478@qq.com" url="https://gitee.com/Lovxy">TheBlind</vendor>
 
     <description><![CDATA[
-       你还在为项目中不敢添加 "敏感注释"!<br>
-       源码是只读文件不能添加注释而烦恼吗？<br>
+        You are still afraid to add "sensitive comments" to the project<br/>
+        Is the source code a read-only file and can't add comments<br/>
+       <li>Anywhere you want to add comments, press <em> Alt + enter </em> mouse out and click to save</li>
+       <li>There are private comments. Press <em> Alt + enter </em> to edit and delete them</li>
+       <br/>
+       你还在为项目中不敢添加 "敏感注释"!<br/>
+       源码是只读文件不能添加注释而烦恼吗？<br/>
        <li>在任何你想加注释的地方 按下<em>Alt + Enter</em>鼠标移出点击即可保存</li>
        <li>已有私人注释 按下<em>Alt + Enter</em>即可编辑和删除</li>
        <img src="https://gitee.com/Lovxy/private-notes/raw/master/doc/show.gif"/>

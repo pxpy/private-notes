@@ -68,25 +68,21 @@ public class IdeaApiUtil {
      *
      * @param content     通知内容
      * @param messageType warning,info,error
-     * @param displayType NONE：无弹框，不展示,BALLOON：自动消失,STICKY_BALLOON：用户点击关闭按钮消失,TOOL_WINDOW：实例效果同STICKY_BALLOON
      */
 
-    public static void showNotification(String content, MessageType messageType, NotificationDisplayType displayType, boolean isLogByDefault, Project project) {
-        NotificationGroup notificationGroup = new NotificationGroup("testid", displayType, isLogByDefault);
+    public static void showNotification(String content, MessageType messageType, Project project) {
+        //BALLOON：自动消失
+        NotificationGroup notificationGroup = NotificationGroup.balloonGroup("PNGroup", "Private Notes Message");
         Notification notification = notificationGroup.createNotification(content, messageType);
         Notifications.Bus.notify(notification, project);
     }
 
     public static void showErrNotification(String content, Project project) {
-        NotificationGroup notificationGroup = new NotificationGroup("testid", NotificationDisplayType.BALLOON, true);
-        Notification notification = notificationGroup.createNotification(content, MessageType.ERROR);
-        Notifications.Bus.notify(notification, project);
+        showNotification(content, MessageType.ERROR, project);
     }
 
     public static void showInfoNotification(String content, Project project) {
-        NotificationGroup notificationGroup = new NotificationGroup("testid", NotificationDisplayType.BALLOON, true);
-        Notification notification = notificationGroup.createNotification(content, MessageType.INFO);
-        Notifications.Bus.notify(notification, project);
+        showNotification(content, MessageType.INFO, project);
     }
 
 }

@@ -6,6 +6,7 @@ import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.MD5;
 import cn.hutool.json.JSONUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.theblind.privatenotes.core.Config;
 import com.theblind.privatenotes.core.NoteFile;
@@ -32,7 +33,6 @@ public class NoteFileServiceImpl implements NoteFileService {
 
     @Override
     public NoteFile get(File file, Object... params) throws Exception {
-
         Config config = configService.get();
         File noteFile = getAbsolutePath(config, file.getName(), generateVersionByCache(file, params[0])).toFile();
 

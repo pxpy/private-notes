@@ -46,8 +46,5 @@ public abstract class BaseIntentionAction implements IntentionAction {
     }
 
 
-    public static boolean canModify(PsiElement element) {
-        return element.getManager().isInProject(element) || ScratchFileService.isInScratchRoot(PsiUtilCore.getVirtualFile(element));
-    }
 }
 

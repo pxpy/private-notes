@@ -1,6 +1,7 @@
 package com.theblind.privatenotes.core.service.impl;
 
 import com.intellij.openapi.components.*;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.theblind.privatenotes.core.Config;
 import com.theblind.privatenotes.core.service.ConfigService;

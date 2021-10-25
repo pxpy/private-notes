@@ -7,7 +7,6 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.JBPopupListener;
-import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -23,16 +22,7 @@ import java.io.InputStream;
 
 public class IdeaApiUtil {
 
-    public static PsiClass getTargetClass(@NotNull Editor editor, @NotNull PsiFile file) {
-        int offset = editor.getCaretModel().getOffset();
-        PsiElement element = file.findElementAt(offset);
-        if (element != null) {
-            // 当前类
-            PsiClass target = PsiTreeUtil.getParentOfType(element, PsiClass.class);
-            return target instanceof SyntheticElement ? null : target;
-        }
-        return null;
-    }
+
 
     public static void showBalloon(JComponent jComponent, String title, JBPopupListener jbPopupListener, Editor editor) {
         IdeaApiUtil.showBalloon(jComponent, title, jbPopupListener, true, true, editor);
@@ -67,22 +57,22 @@ public class IdeaApiUtil {
      * 通知
      *
      * @param content     通知内容
-     * @param messageType warning,info,error
+     * @param type warning,info,error
      */
 
-    public static void showNotification(String content, MessageType messageType, Project project) {
-        //BALLOON：自动消失
-        NotificationGroup notificationGroup = NotificationGroup.balloonGroup("PNGroup", "Private Notes Message");
-        Notification notification = notificationGroup.createNotification(content, messageType);
+    public static void showNotification(String content, NotificationType type, Project project) {
+        //BALLOON：自动消失 NotificationGroup
+        Notification notification = new Notification("PNGroup", "Private Notes Message", content, type);
         Notifications.Bus.notify(notification, project);
+
     }
 
     public static void showErrNotification(String content, Project project) {
-        showNotification(content, MessageType.ERROR, project);
+        showNotification(content, NotificationType.ERROR, project);
     }
 
     public static void showInfoNotification(String content, Project project) {
-        showNotification(content, MessageType.INFO, project);
+        showNotification(content, NotificationType.INFORMATION, project);
     }
 
 }

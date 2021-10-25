@@ -2,9 +2,6 @@ package com.theblind.privatenotes.action;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.util.IntentionFamilyName;
-import com.intellij.ide.scratch.ScratchFileService;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiUtilCore;
 import com.theblind.privatenotes.core.PrivateNotesFactory;
 import com.theblind.privatenotes.core.service.NoteFileService;
 import org.jetbrains.annotations.Nls;

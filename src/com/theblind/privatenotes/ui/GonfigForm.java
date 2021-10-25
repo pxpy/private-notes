@@ -91,7 +91,7 @@ public class GonfigForm implements SearchableConfigurable {
         config.setMark(markText.getText());
         config.setNoteColor(Config.byColor(noteLabSel.getForeground()));
         config.setMarkColor(Config.byColor(noteLabSel.getForeground()));
-        configService.save(config, );
+        configService.save(config);
     }
 
 

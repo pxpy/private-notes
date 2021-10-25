@@ -5,7 +5,6 @@ import com.intellij.openapi.editor.LineExtensionInfo;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.JBColor;
 import com.theblind.privatenotes.core.Config;
 import com.theblind.privatenotes.core.PrivateNotesFactory;
 import com.theblind.privatenotes.core.service.ConfigService;

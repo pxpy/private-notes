@@ -2,7 +2,6 @@ package com.theblind.privatenotes.core.listener;
 
 import com.intellij.psi.PsiTreeChangeEvent;
 import com.intellij.psi.PsiTreeChangeListener;
-import com.intellij.psi.impl.source.PsiFileImpl;
 import com.theblind.privatenotes.core.PrivateNotesFactory;
 import com.theblind.privatenotes.core.service.NoteFileService;
 import org.jetbrains.annotations.NotNull;

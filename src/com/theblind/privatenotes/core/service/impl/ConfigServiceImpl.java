@@ -1,7 +1,7 @@
 package com.theblind.privatenotes.core.service.impl;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
-import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.theblind.privatenotes.core.Config;
 import com.theblind.privatenotes.core.service.ConfigService;
@@ -18,7 +18,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public Config get() {
         if (Objects.isNull(configCache)) {
-            ConfigPersistenceThroughIdea persistence = ServiceManager.getService(ConfigPersistenceThroughIdea.class);
+            ConfigPersistenceThroughIdea persistence = ApplicationManager.getApplication().getService(ConfigPersistenceThroughIdea.class);
             configCache = persistence.getConfig();
         }
         return configCache;
@@ -26,7 +26,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public void save(Config config) {
-        ConfigPersistenceThroughIdea persistence = ServiceManager.getService(ConfigPersistenceThroughIdea.class);
+        ConfigPersistenceThroughIdea persistence = ApplicationManager.getApplication().getService(ConfigPersistenceThroughIdea.class);
         persistence.setConfig(config);
         configCache = config;
     }

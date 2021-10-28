@@ -5,6 +5,7 @@
     <vendor email="1043193478@qq.com" url="https://gitee.com/Lovxy">TheBlind</vendor>
 
     <description><![CDATA[
+         <a href="https://gitee.com/Lovxy/private-notes">Private Notes source code and document</a><br>
         You are still afraid to add "sensitive comments" to the project<br/>
         Is the source code a read-only file and can't add comments<br/>
        <li>Anywhere you want to add comments, press <em> Alt + enter </em> mouse out and click to save</li>
@@ -17,6 +18,19 @@
        <img src="https://gitee.com/Lovxy/private-notes/raw/master/doc/show.gif"/>
     ]]></description>
 
+    <change-notes><![CDATA[
+      <h3>v1.1 update</h3>
+      <ul>
+          <li>modify input box size</li>
+          <li>add copy note</li>
+          <li>fix some bugs</li>
+      </ul>
+      <h3>v1.0 first version</h3>
+      <ul>
+          <li>add private notes</li>
+      </ul>
+    ]]>
+    </change-notes>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
     <idea-version since-build="193.0"/>
@@ -28,17 +42,20 @@
     <extensions defaultExtensionNs="com.intellij">
 
         <!--intentionAction 相关-->
-        <intentionAction>
+        <intentionAction order="first">
             <className>com.theblind.privatenotes.action.AddNoteIntentionAction</className>
         </intentionAction>
-        <intentionAction>
+        <intentionAction order="first">
             <className>com.theblind.privatenotes.action.EditNoteIntentionAction</className>
         </intentionAction>
-        <intentionAction>
+        <intentionAction order="first">
             <className>com.theblind.privatenotes.action.DeleteNoteIntentionAction</className>
         </intentionAction>
-        <intentionAction>
+        <intentionAction order="first">
             <className>com.theblind.privatenotes.action.WrapNoteIntentionAction</className>
+        </intentionAction>
+        <intentionAction order="first">
+            <className>com.theblind.privatenotes.action.CopyNoteIntentionAction</className>
         </intentionAction>
 
         <!--行尾拓展-->

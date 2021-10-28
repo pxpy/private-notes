@@ -11,5 +11,10 @@
  已有私人注释 按下**Alt + Enter**即可编辑和删除<br>
 ![示例1](./doc/show.gif)
 
+####安装
+打开IntelliJ IDEA -> plugin，搜索 Private Notes，安装重启即可
+
+####配置
+![输入图片说明](https://images.gitee.com/uploads/images/2021/1028/165110_4fadd758_2189193.png "屏幕截图.png")
 
 

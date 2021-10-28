@@ -6,15 +6,13 @@ import com.intellij.openapi.util.NlsContexts;
 import com.theblind.privatenotes.core.Config;
 import com.theblind.privatenotes.core.PrivateNotesFactory;
 import com.theblind.privatenotes.core.service.ConfigService;
+import com.theblind.privatenotes.core.util.IdeaApiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class GonfigForm implements SearchableConfigurable {
     final ConfigService configService = PrivateNotesFactory.getConfigService();
@@ -22,9 +20,9 @@ public class GonfigForm implements SearchableConfigurable {
     private JPanel mainPane;
     private JTabbedPane tabbedPane1;
     private JTextField markText;
-    private JTextField emailText;
+    private JTextField userText;
     private JLabel markLabel;
-    private JLabel emailLabel;
+    private JLabel userLabel;
     private JLabel markLabSel;
     private JLabel noteLabSel;
 
@@ -45,15 +43,15 @@ public class GonfigForm implements SearchableConfigurable {
     public JComponent createComponent() {//创建面板
 
         Config config = configService.get();
-        emailText.setText(config.getEmail());
+        userText.setText(config.getUser());
 
         noteLabSel.setForeground(Config.asColor(config.getNoteColor()));
         markLabSel.setForeground(Config.asColor(config.getMarkColor()));
         markLabSel.setText(config.getMark());
         markText.setText(config.getMark());
         //设置颜色选择监听
-        this.chooseColorListener(noteLabSel);
-        this.chooseColorListener(markLabSel);
+        IdeaApiUtil.chooseColorListener(mainPane,noteLabSel);
+        IdeaApiUtil.chooseColorListener(mainPane,markLabSel);
 
         markText.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -87,26 +85,15 @@ public class GonfigForm implements SearchableConfigurable {
     @Override
     public void apply() throws ConfigurationException {//配置中点击确定的时候
         Config config = configService.get();
-        config.setEmail(emailText.getText());
+        config.setUser(userText.getText());
         config.setMark(markText.getText());
         config.setNoteColor(Config.byColor(noteLabSel.getForeground()));
-        config.setMarkColor(Config.byColor(noteLabSel.getForeground()));
+        config.setMarkColor(Config.byColor(markLabSel.getForeground()));
         configService.save(config);
     }
 
 
 
-    private void chooseColorListener(final JComponent jComponent) {
-        jComponent.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(final MouseEvent e) {
-                final Color chooseColor = JColorChooser.showDialog(
-                        mainPane, "Choose color", jComponent.getForeground());
 
-                if (null != chooseColor)
-                    jComponent.setForeground(chooseColor);
-            }
-        });
-    }
 
 }

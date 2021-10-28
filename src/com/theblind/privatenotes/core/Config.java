@@ -2,6 +2,7 @@ package com.theblind.privatenotes.core;
 
 
 import cn.hutool.core.util.StrUtil;
+import com.theblind.privatenotes.core.util.IdeaApiUtil;
 
 import java.awt.*;
 import java.io.File;
@@ -16,9 +17,9 @@ public class Config {
     boolean syncEnabled = false;
 
     /**
-     * 邮箱  用于 登录账号
+     *  用户
      */
-    String email;
+    String user;
 
     /**
      * 注释颜色
@@ -33,17 +34,17 @@ public class Config {
     /**
      * 私人注释标记
      */
-    String mark = "◄";
+    String mark = "//";
 
     /**
      *标记颜色
      */
-    String markColor = "0,0,255,255";
+    String markColor = "153,153,255,255";
     
 
 
     public String getUserSavePath() {
-        return StrUtil.isEmpty(email) ? defaultUserPath : (rootPath + File.separator + email);
+        return StrUtil.isEmpty(user) ? defaultUserPath : (rootPath + File.separator + user);
     }
 
     public boolean isSyncEnabled() {
@@ -54,12 +55,12 @@ public class Config {
         this.syncEnabled = syncEnabled;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUser() {
+        return user;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public String getNoteColor() {

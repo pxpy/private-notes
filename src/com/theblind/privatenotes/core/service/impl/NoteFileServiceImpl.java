@@ -126,7 +126,7 @@ public class NoteFileServiceImpl implements NoteFileService {
     public void saveNote(NoteFile noteFile) throws Exception {
         Config config = configService.get();
 
-        if (StringUtil.isEmpty(config.getEmail())) {
+        if (StringUtil.isEmpty(config.getUser())) {
             File file = getAbsolutePath(config, noteFile).toFile();
             // 创建文件
             FileUtil.touch(file);

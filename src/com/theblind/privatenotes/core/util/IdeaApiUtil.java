@@ -1,5 +1,6 @@
 package com.theblind.privatenotes.core.util;
 
+import cn.hutool.core.thread.ThreadUtil;
 import com.intellij.notification.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -16,6 +17,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,8 +67,9 @@ public class IdeaApiUtil {
     public static void showNotification(String content, NotificationType type, Project project) {
         //BALLOON：自动消失 NotificationGroup
         Notification notification = new Notification("PNGroup", "Private Notes Message", content, type);
-        Notifications.Bus.notify(notification, project);
-
+        ThreadUtil.execute(()->{
+            Notifications.Bus.notify(notification, project);
+        });
     }
 
     public static void showErrNotification(String content, Project project) {
@@ -75,4 +80,22 @@ public class IdeaApiUtil {
         showNotification(content, NotificationType.INFORMATION, project);
     }
 
+
+    /**
+     * 颜色选择
+     * @param placement 选择器放置位置
+     * @param lc 需要监听的组件
+     */
+    public static void chooseColorListener(JComponent placement, JComponent lc) {
+        lc.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(final MouseEvent e) {
+                final Color chooseColor = JColorChooser.showDialog(
+                        placement, "Choose color", lc.getForeground());
+
+                if (null != chooseColor)
+                    lc.setForeground(chooseColor);
+            }
+        });
+    }
 }

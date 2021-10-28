@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>TheBlind.privateNotes</id>
     <name>Private Notes</name>
-    <version>1.0</version>
+    <version>1.1</version>
     <vendor email="1043193478@qq.com" url="https://gitee.com/Lovxy">TheBlind</vendor>
 
     <description><![CDATA[
@@ -24,17 +24,17 @@
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.modules.java</depends>
+
     <extensions defaultExtensionNs="com.intellij">
 
         <!--intentionAction 相关-->
         <intentionAction>
             <className>com.theblind.privatenotes.action.AddNoteIntentionAction</className>
         </intentionAction>
-        <intentionAction>
+        <intentionAction order="first">
             <className>com.theblind.privatenotes.action.EditNoteIntentionAction</className>
         </intentionAction>
-        <intentionAction>
+        <intentionAction order="first">
             <className>com.theblind.privatenotes.action.DeleteNoteIntentionAction</className>
         </intentionAction>
         <intentionAction>
@@ -54,6 +54,20 @@
                 implementation="com.theblind.privatenotes.core.listener.PrivateNotesFileChangeListener"/>
     </extensions>
 
+    <actions>
+        <group id="Test" text="[Notes] 私人注释">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
+                          relative-to-action="ReplaceInPath"/>
+            <!-- 创建Halo Basic -->
+            <action class="org.xujin.idea.right.NewBasicExeAction"
+                    id="halo.basic.class" description="Halo Basic"
+                    text="Basic Class">
+                <add-to-group group-id="Test"/>
+            </action>
+        </group>
+
+
+    </actions>
     <!--文件监听-->
     <projectListeners>
         <listener class="com.theblind.privatenotes.core.listener.PrivateNotesFileEditorManagerListener"

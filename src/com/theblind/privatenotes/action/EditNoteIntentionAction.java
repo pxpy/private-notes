@@ -25,9 +25,9 @@ public class EditNoteIntentionAction extends BaseIntentionAction {
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         try {
             return noteFileService.noteExist(psiFile.getVirtualFile().getCanonicalPath(),
-                    editor.getDocument().getLineNumber(editor.getCaretModel().getOffset()), PrivateNotesUtil.getBytes(psiFile.getVirtualFile().getInputStream()));
+                    IdeaApiUtil.getSelLineNumber(editor), IdeaApiUtil.getBytes(psiFile.getVirtualFile()));
         } catch (Exception e) {
-            e.printStackTrace();
+            PrivateNotesUtil.errLog(e, project);
         }
         return false;
     }
@@ -51,7 +51,7 @@ public class EditNoteIntentionAction extends BaseIntentionAction {
             public void onClosed(@NotNull LightweightWindowEvent event) {
                 try {
                     noteFileService.saveNote(virtualFile.getCanonicalPath(),
-                            selLineNumber, editorPane.getText(), PrivateNotesUtil.getBytes(virtualFile.getInputStream()));
+                            selLineNumber, editorPane.getText(), IdeaApiUtil.getBytes(virtualFile));
                 } catch (Exception e) {
                     PrivateNotesUtil.errLog(e, project);
                 }

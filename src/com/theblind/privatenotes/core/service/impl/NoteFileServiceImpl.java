@@ -244,10 +244,14 @@ public class NoteFileServiceImpl implements NoteFileService {
     }
 
     public Path getAbsolutePath(Config config, String fileName, String version) {
-        String[] split = fileName.split("\\.");
-        String ruleName = fileNamingRules(split[0], split[1], version);
+        String[] nameSplit = fileName.split("\\.");
+        String fileType=" ";
+        if(nameSplit.length==2){
+            fileType=nameSplit[1];
+        }
+
         //index(ruleName)
-        return Paths.get(config.getUserSavePath(), ruleName + ".txt");
+        return Paths.get(config.getUserSavePath(), fileNamingRules(nameSplit[0], fileType, version) + ".txt");
     }
 
     /**

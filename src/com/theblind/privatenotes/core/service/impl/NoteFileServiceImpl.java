@@ -43,11 +43,12 @@ public class NoteFileServiceImpl implements NoteFileService {
 
         File noteFile = getAbsolutePath(config, file.getName(), generateVersionByCache(file, params[0])).toFile();
         if (noteFile.exists()) {
-
-            return noteFileCache.get(noteFile.getName(),()->{
-                FileReader fileReader = new FileReader(noteFile);
-                return JSONUtil.toBean(fileReader.readString(), NoteFile.class);
-            });
+            synchronized (NoteFileService.class) {
+                return noteFileCache.get(noteFile.getName(), () -> {
+                    FileReader fileReader = new FileReader(noteFile);
+                    return JSONUtil.toBean(fileReader.readString(), NoteFile.class);
+                });
+            }
         }
 
         return null;
@@ -162,8 +163,12 @@ public class NoteFileServiceImpl implements NoteFileService {
             noteFile = new NoteFile();
             String fileName = file.getName();
             String[] split = fileName.split("\\.");
+            String defaultType = " ";
+            if (split.length == 2) {
+                defaultType = split[1];
+            }
             noteFile.setFileName(fileName);
-            noteFile.setFileType(split[1]);
+            noteFile.setFileType(defaultType);
             noteFile.setFileSimpleName(split[0]);
             noteFile.setVersion(generateVersionByCache(file, params[0]));
         }
@@ -198,9 +203,12 @@ public class NoteFileServiceImpl implements NoteFileService {
     @Override
     public void delNoteFile(NoteFile noteFile) throws Exception {
         Config config = configService.get();
-        File localFile = getAbsolutePath(config, noteFile.getFileSimpleName(), noteFile.getVersion()).toFile();
-        FileUtil.del(localFile);
-        noteFileCache.remove(localFile.getName());
+        File localFile = getAbsolutePath(config, noteFile.getFileName(), noteFile.getVersion()).toFile();
+        String name = localFile.getName();
+        synchronized (NoteFileService.class) {
+            FileUtil.del(localFile);
+            noteFileCache.remove(name);
+        }
     }
 
     @Override
@@ -210,6 +218,7 @@ public class NoteFileServiceImpl implements NoteFileService {
 
     @Override
     public void removeCache(String path, Object... params) {
+
 
     }
 
@@ -264,13 +273,13 @@ public class NoteFileServiceImpl implements NoteFileService {
 
     public Path getAbsolutePath(Config config, String fileName, String version) {
         String[] nameSplit = fileName.split("\\.");
-        String fileType = " ";
+        String defaultType = " ";
         if (nameSplit.length == 2) {
-            fileType = nameSplit[1];
+            defaultType = nameSplit[1];
         }
 
         //index(ruleName)
-        return Paths.get(config.getUserSavePath(), fileNamingRules(nameSplit[0], fileType, version) + ".txt");
+        return Paths.get(config.getUserSavePath(), fileNamingRules(nameSplit[0], defaultType, version) + ".txt");
     }
 
     /**

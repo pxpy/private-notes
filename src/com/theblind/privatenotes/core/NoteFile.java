@@ -61,6 +61,10 @@ public class NoteFile {
         return notes.get(lineNumber);
     }
 
+    public int getNodeSize(){
+        return notes.size();
+    }
+
     public void setNode(int lineNumber, String content) {
         if (Objects.isNull(notes)) {
             notes = new HashMap<>();

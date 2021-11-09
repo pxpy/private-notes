@@ -1,5 +1,7 @@
 package com.theblind.privatenotes.core.listener;
 
+import cn.hutool.cache.CacheUtil;
+import cn.hutool.cache.impl.TimedCache;
 import com.intellij.openapi.editor.EditorLinePainter;
 import com.intellij.openapi.editor.LineExtensionInfo;
 import com.intellij.openapi.editor.markup.TextAttributes;
@@ -26,11 +28,13 @@ public class PrivateNotesEditorLinePainter  extends EditorLinePainter {
     NoteFileService noteFileService = PrivateNotesFactory.getNoteFileService();
     ConfigService configService = PrivateNotesFactory.getConfigService();
 
+    TimedCache<String, Object> timedCache = CacheUtil.newTimedCache(60*1000);
 
     @Nullable
     @Override
     public Collection<LineExtensionInfo> getLineExtensions(@NotNull Project project, @NotNull VirtualFile virtualFile, int i) {
         Config config = configService.get();
+
         List<LineExtensionInfo> result = new ArrayList<>();//✍
         try {
             String note = noteFileService.getNote(virtualFile.getPath(), i, IdeaApiUtil.getBytes(virtualFile));
@@ -43,7 +47,11 @@ public class PrivateNotesEditorLinePainter  extends EditorLinePainter {
                     new TextAttributes(null, null, Config.asColor(config.getNoteColor()), null, Font.PLAIN)));
             return result;
         }catch (Exception e){
-            PrivateNotesUtil.errLog(e, project);
+            //防止异常被 重复输出
+            if (!timedCache.containsKey(virtualFile.getPath())) {
+                timedCache.put(virtualFile.getPath(),null);
+                PrivateNotesUtil.errLog(e, project);
+            }
         }
         return null;
     }

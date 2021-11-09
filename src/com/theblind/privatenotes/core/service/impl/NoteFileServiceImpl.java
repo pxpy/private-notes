@@ -1,5 +1,7 @@
 package com.theblind.privatenotes.core.service.impl;
 
+import cn.hutool.cache.CacheUtil;
+import cn.hutool.cache.impl.LRUCache;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileReader;
 import cn.hutool.core.io.file.FileWriter;
@@ -26,18 +28,26 @@ public class NoteFileServiceImpl implements NoteFileService {
 
 
     ConfigService configService = PrivateNotesFactory.getConfigService();
+
     MD5 md5 = MD5.create();
+
     Map<String, String> versionCache = new HashMap();
+
+    //存满了就移除最久未使用的元素
+    LRUCache<String, NoteFile> noteFileCache = CacheUtil.<String, NoteFile>newLRUCache(5);
 
 
     @Override
     public NoteFile get(File file, Object... params) throws Exception {
         Config config = configService.get();
-        File noteFile = getAbsolutePath(config, file.getName(), generateVersionByCache(file, params[0])).toFile();
 
+        File noteFile = getAbsolutePath(config, file.getName(), generateVersionByCache(file, params[0])).toFile();
         if (noteFile.exists()) {
-            FileReader fileReader = new FileReader(noteFile);
-            return JSONUtil.toBean(fileReader.readString(), NoteFile.class);
+
+            return noteFileCache.get(noteFile.getName(),()->{
+                FileReader fileReader = new FileReader(noteFile);
+                return JSONUtil.toBean(fileReader.readString(), NoteFile.class);
+            });
         }
 
         return null;
@@ -132,7 +142,6 @@ public class NoteFileServiceImpl implements NoteFileService {
             FileUtil.touch(file);
             FileWriter fileWriter = new FileWriter(file);
             fileWriter.write(JsonUtil.toJson(noteFile));
-
         }
     }
 
@@ -163,8 +172,6 @@ public class NoteFileServiceImpl implements NoteFileService {
     }
 
 
-
-
     @Override
     public void saveNote(List<NoteFile> noteFileList) {
 
@@ -178,10 +185,22 @@ public class NoteFileServiceImpl implements NoteFileService {
     @Override
     public void delNote(File file, int lineNumber, Object... params) throws Exception {
         NoteFile noteFile = get(file, params);
+        if (noteFile.getNodeSize() == 1) {
+            delNoteFile(noteFile);
+            return;
+        }
         if (noteFile != null) {
             noteFile.removeNode(lineNumber);
             saveNote(noteFile);
         }
+    }
+
+    @Override
+    public void delNoteFile(NoteFile noteFile) throws Exception {
+        Config config = configService.get();
+        File localFile = getAbsolutePath(config, noteFile.getFileSimpleName(), noteFile.getVersion()).toFile();
+        FileUtil.del(localFile);
+        noteFileCache.remove(localFile.getName());
     }
 
     @Override
@@ -199,7 +218,7 @@ public class NoteFileServiceImpl implements NoteFileService {
         NoteFile noteFile = get(path, params);
         String node = noteFile.getNode(lineNumber);
         noteFile.removeNode(lineNumber);
-        noteFile.setNode(++lineNumber,node);
+        noteFile.setNode(++lineNumber, node);
         saveNote(noteFile);
     }
 
@@ -245,9 +264,9 @@ public class NoteFileServiceImpl implements NoteFileService {
 
     public Path getAbsolutePath(Config config, String fileName, String version) {
         String[] nameSplit = fileName.split("\\.");
-        String fileType=" ";
-        if(nameSplit.length==2){
-            fileType=nameSplit[1];
+        String fileType = " ";
+        if (nameSplit.length == 2) {
+            fileType = nameSplit[1];
         }
 
         //index(ruleName)

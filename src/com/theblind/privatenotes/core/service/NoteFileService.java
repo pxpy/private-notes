@@ -35,6 +35,8 @@ public interface NoteFileService {
 
     void delNote(File file, int lineNumber, Object... params) throws Exception;
 
+    void delNoteFile(NoteFile noteFile)throws Exception;
+
     void loadCache(String path, Object... params) throws Exception;
 
     void removeCache(String path, Object... params) throws Exception;

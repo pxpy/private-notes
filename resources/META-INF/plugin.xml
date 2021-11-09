@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>TheBlind.privateNotes</id>
     <name>Private Notes</name>
-    <version>1.1</version>
+    <version>1.2</version>
     <vendor email="1043193478@qq.com" url="https://gitee.com/Lovxy">TheBlind</vendor>
 
     <description><![CDATA[
@@ -19,6 +19,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <h3>v1.2 update</h3>
+      <ul>
+          <li>fix bug</li>
+          <li>optimize performance</li>
+      </ul>
       <h3>v1.1 update</h3>
       <ul>
           <li>modify input box size</li>
@@ -48,13 +53,13 @@
         <intentionAction order="first">
             <className>com.theblind.privatenotes.action.EditNoteIntentionAction</className>
         </intentionAction>
-        <intentionAction order="first">
+        <intentionAction >
             <className>com.theblind.privatenotes.action.DeleteNoteIntentionAction</className>
         </intentionAction>
-        <intentionAction order="first">
+        <intentionAction >
             <className>com.theblind.privatenotes.action.WrapNoteIntentionAction</className>
         </intentionAction>
-        <intentionAction order="first">
+        <intentionAction >
             <className>com.theblind.privatenotes.action.CopyNoteIntentionAction</className>
         </intentionAction>
 
@@ -72,16 +77,6 @@
     </extensions>
 
     <actions>
-        <group id="Test" text="[Notes] 私人注释">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
-                          relative-to-action="ReplaceInPath"/>
-            <!-- 创建Halo Basic -->
-            <action class="org.xujin.idea.right.NewBasicExeAction"
-                    id="halo.basic.class" description="Halo Basic"
-                    text="Basic Class">
-                <add-to-group group-id="Test"/>
-            </action>
-        </group>
 
 
     </actions>

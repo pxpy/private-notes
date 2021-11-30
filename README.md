@@ -18,3 +18,13 @@
 ![输入图片说明](https://images.gitee.com/uploads/images/2021/1028/165110_4fadd758_2189193.png "屏幕截图.png")
 
 
+#### 同步
+私人注释 都缓存在 当前用户目录下的 .privateNotes文件夹中,如需同步，可以借助强大的Git
+
+![示例1](./doc/localFile.jpg)
+如果你熟练git命令可以直接通过 命令的方式，或者通过idea像我们平时一样
+
+将项目导入idea中,并上传到gitee或者github中
+[将项目首次导入到 gitee中](https://blog.csdn.net/qq_40495860/article/details/102722894)
+
+

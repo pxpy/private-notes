@@ -172,7 +172,7 @@ public class NoteFileServiceImpl implements NoteFileService {
             noteFile.setFileSimpleName(split[0]);
             noteFile.setVersion(generateVersionByCache(file, params[0]));
         }
-        noteFile.setNode(lineNumber, note);
+        noteFile.setNode(lineNumber, note.trim());
         saveNote(noteFile);
     }
 

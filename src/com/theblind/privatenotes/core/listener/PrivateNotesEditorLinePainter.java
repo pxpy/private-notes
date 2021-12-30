@@ -2,6 +2,7 @@ package com.theblind.privatenotes.core.listener;
 
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
+import cn.hutool.core.util.StrUtil;
 import com.intellij.openapi.editor.EditorLinePainter;
 import com.intellij.openapi.editor.LineExtensionInfo;
 import com.intellij.openapi.editor.markup.TextAttributes;
@@ -21,14 +22,15 @@ import java.util.List;
 import java.util.*;
 
 /**
+ * abcdef
  * 行尾拓展
  */
-public class PrivateNotesEditorLinePainter  extends EditorLinePainter {
+public class PrivateNotesEditorLinePainter extends EditorLinePainter {
 
     NoteFileService noteFileService = PrivateNotesFactory.getNoteFileService();
     ConfigService configService = PrivateNotesFactory.getConfigService();
 
-    TimedCache<String, Object> timedCache = CacheUtil.newTimedCache(60*1000);
+    TimedCache<String, Object> timedCache = CacheUtil.newTimedCache(60 * 1000);
 
     @Nullable
     @Override
@@ -38,18 +40,23 @@ public class PrivateNotesEditorLinePainter  extends EditorLinePainter {
         List<LineExtensionInfo> result = new ArrayList<>();//✍
         try {
             String note = noteFileService.getNote(virtualFile.getPath(), i, IdeaApiUtil.getBytes(virtualFile));
-            if(Objects.isNull(note)){
+            if (Objects.isNull(note)) {
                 return null;
             }
-            result.add(new LineExtensionInfo(String.format(" %s ",config.getMark()) ,
-                    new TextAttributes(null, null,Config.asColor(config.getMarkColor()), null, Font.PLAIN)));
+            Integer maxCharNum = config.getMaxCharNum();
+            if (note.length()>maxCharNum) {
+                note = StrUtil.builder().append(note, 0, maxCharNum ).append("...").toString();
+            }
+
+            result.add(new LineExtensionInfo(String.format(" %s ", config.getMark()),
+                    new TextAttributes(null, null, Config.asColor(config.getMarkColor()), null, Font.PLAIN)));
             result.add(new LineExtensionInfo(note,
                     new TextAttributes(null, null, Config.asColor(config.getNoteColor()), null, Font.PLAIN)));
             return result;
-        }catch (Exception e){
+        } catch (Exception e) {
             //防止异常被 重复输出
             if (!timedCache.containsKey(virtualFile.getPath())) {
-                timedCache.put(virtualFile.getPath(),null);
+                timedCache.put(virtualFile.getPath(), null);
                 PrivateNotesUtil.errLog(e, project);
             }
         }

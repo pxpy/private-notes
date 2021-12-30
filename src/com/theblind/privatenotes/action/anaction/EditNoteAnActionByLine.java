@@ -1,12 +1,15 @@
-package com.theblind.privatenotes.action;
+package com.theblind.privatenotes.action.anaction;
 
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.IncorrectOperationException;
+import com.theblind.privatenotes.action.ActionHandle;
+import com.theblind.privatenotes.core.PrivateNotesFactory;
+import com.theblind.privatenotes.core.service.NoteFileService;
 import com.theblind.privatenotes.core.util.IdeaApiUtil;
 import com.theblind.privatenotes.core.util.PrivateNotesUtil;
 import com.theblind.privatenotes.ui.PrivateNotesEditorForm;
@@ -14,30 +17,28 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class EditNoteIntentionAction extends BaseIntentionAction {
-
-    public EditNoteIntentionAction() {
-        super("[Note] 编辑私人注释");
-    }
+public class EditNoteAnActionByLine extends BaseAnAction {
 
 
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
-        try {
-            return noteFileService.noteExist(psiFile.getVirtualFile().getCanonicalPath(),
-                    IdeaApiUtil.getSelLineNumber(editor), IdeaApiUtil.getBytes(psiFile.getVirtualFile()));
-        } catch (Exception e) {
-            PrivateNotesUtil.errLog(e, project);
-        }
-        return false;
+    int selLineNumber;
+
+    public static final NoteFileService noteFileService = PrivateNotesFactory.getNoteFileService();
+
+
+    public EditNoteAnActionByLine(int line) {
+        super(ActionHandle.Operate.EDIT);
+        this.selLineNumber=line;
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
+    public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
+        Project project = CommonDataKeys.PROJECT.getData(anActionEvent.getDataContext());
+        Editor editor = CommonDataKeys.EDITOR.getData(anActionEvent.getDataContext());
+        VirtualFile virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(anActionEvent.getDataContext());
         PrivateNotesEditorForm remarkEditor = new PrivateNotesEditorForm();
+        JScrollPane scrollPane = remarkEditor.getScrollPane();
         JEditorPane editorPane = remarkEditor.getEditorPane1();
-        VirtualFile virtualFile = psiFile.getVirtualFile();
-        Integer selLineNumber = IdeaApiUtil.getSelLineNumber(editor);
+
         try {
             editorPane.setText(noteFileService.getNote(virtualFile.getCanonicalPath(),
                     selLineNumber,
@@ -46,7 +47,7 @@ public class EditNoteIntentionAction extends BaseIntentionAction {
             PrivateNotesUtil.errLog(e, project);
         }
 
-        IdeaApiUtil.showBalloon(editorPane, myText, new JBPopupListener() {
+        IdeaApiUtil.showBalloon(remarkEditor.getPanel1(), ActionHandle.Operate.EDIT.getTitle(), new JBPopupListener() {
             @Override
             public void onClosed(@NotNull LightweightWindowEvent event) {
                 try {
@@ -57,6 +58,8 @@ public class EditNoteIntentionAction extends BaseIntentionAction {
                 }
             }
         }, editor);
-        editorPane.requestFocus();
+        //editorPane.requestFocus();
+        remarkEditor.top();
+
     }
 }

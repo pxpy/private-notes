@@ -2,18 +2,16 @@ package com.theblind.privatenotes.core.util;
 
 import cn.hutool.core.thread.ThreadUtil;
 import com.intellij.notification.*;
+import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.LogicalPosition;
+import com.intellij.openapi.editor.SelectionModel;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.ui.popup.Balloon;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.JBPopupListener;
+import com.intellij.openapi.ui.popup.*;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.SyntheticElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -27,15 +25,32 @@ import java.io.InputStream;
 public class IdeaApiUtil {
 
 
-
     public static void showBalloon(JComponent jComponent, String title, JBPopupListener jbPopupListener, Editor editor) {
         IdeaApiUtil.showBalloon(jComponent, title, jbPopupListener, true, true, editor);
     }
 
 
+    public static JBPopup showComponent(JComponent body, JComponent focusComponent, String title, Icon cancelIcon) {
+        ComponentPopupBuilder componentPopupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(body, focusComponent);
+        JBPopup popup = componentPopupBuilder.setCancelKeyEnabled(true)
+                .setTitle(title)
+                .setCancelButton(new IconButton("关闭", cancelIcon))
+                .setResizable(true)
+                .setRequestFocus(true)
+                .setCancelOnClickOutside(false)
+                .setShowBorder(false)
+                .setMovable(true).createPopup();
+        return popup;
+    }
+
+    public static void showComponent(String title, JComponent body, JComponent focusComponent, Editor editor, Icon cancelIcon) {
+        JBPopup jbPopup = showComponent(body, focusComponent, title, cancelIcon);
+        jbPopup.showInBestPositionFor(editor);
+    }
+
     public static void showBalloon(JComponent jComponent, String title, JBPopupListener jbPopupListener, boolean hideOnClickOutside, boolean dialogMode, Editor editor) {
-        final JBPopupFactory popupFactory = JBPopupFactory.getInstance();
-        final Balloon balloon = popupFactory.createDialogBalloonBuilder(jComponent, title)
+        JBPopupFactory popupFactory = JBPopupFactory.getInstance();
+        Balloon balloon = popupFactory.createDialogBalloonBuilder(jComponent, title)
                 .setHideOnClickOutside(hideOnClickOutside)
                 .setDialogMode(dialogMode)
                 .createBalloon();
@@ -60,14 +75,14 @@ public class IdeaApiUtil {
     /**
      * 通知
      *
-     * @param content     通知内容
-     * @param type warning,info,error
+     * @param content 通知内容
+     * @param type    warning,info,error
      */
 
     public static void showNotification(String content, NotificationType type, Project project) {
         //BALLOON：自动消失 NotificationGroup
         Notification notification = new Notification("PNGroup", "Private Notes Message", content, type);
-        ThreadUtil.execute(()->{
+        ThreadUtil.execute(() -> {
             Notifications.Bus.notify(notification, project);
         });
     }
@@ -83,8 +98,9 @@ public class IdeaApiUtil {
 
     /**
      * 颜色选择
+     *
      * @param placement 选择器放置位置
-     * @param lc 需要监听的组件
+     * @param lc        需要监听的组件
      */
     public static void chooseColorListener(JComponent placement, JComponent lc) {
         lc.addMouseListener(new MouseAdapter() {
@@ -97,5 +113,19 @@ public class IdeaApiUtil {
                     lc.setForeground(chooseColor);
             }
         });
+    }
+
+
+    public static void to(Project project, VirtualFile mapperFile, Integer lineNumber) {
+        OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, mapperFile);
+        Editor editor = FileEditorManager.getInstance(project).openTextEditor(openFileDescriptor, true);
+
+        CaretModel caretModel = editor.getCaretModel();
+        LogicalPosition logicalPosition = caretModel.getLogicalPosition();
+        logicalPosition.leanForward(true);
+        LogicalPosition logical = new LogicalPosition(lineNumber, logicalPosition.column);
+        caretModel.moveToLogicalPosition(logical);
+        SelectionModel selectionModel = editor.getSelectionModel();
+        selectionModel.selectLineAtCaret();
     }
 }

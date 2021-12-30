@@ -25,6 +25,7 @@ public class GonfigForm implements SearchableConfigurable {
     private JLabel userLabel;
     private JLabel markLabSel;
     private JLabel noteLabSel;
+    private JSpinner maxCharNum;
 
 
     @NotNull
@@ -52,6 +53,7 @@ public class GonfigForm implements SearchableConfigurable {
         //设置颜色选择监听
         IdeaApiUtil.chooseColorListener(mainPane,noteLabSel);
         IdeaApiUtil.chooseColorListener(mainPane,markLabSel);
+        maxCharNum.setValue(config.getMaxCharNum());
 
         markText.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -89,6 +91,7 @@ public class GonfigForm implements SearchableConfigurable {
         config.setMark(markText.getText());
         config.setNoteColor(Config.byColor(noteLabSel.getForeground()));
         config.setMarkColor(Config.byColor(markLabSel.getForeground()));
+        config.setMaxCharNum((Integer) maxCharNum.getValue());
         configService.save(config);
     }
 

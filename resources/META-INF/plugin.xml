@@ -48,19 +48,10 @@
 
         <!--intentionAction 相关-->
         <intentionAction order="first">
-            <className>com.theblind.privatenotes.action.AddNoteIntentionAction</className>
+            <className>com.theblind.privatenotes.action.intent.AddNoteIntentionAction</className>
         </intentionAction>
         <intentionAction order="first">
-            <className>com.theblind.privatenotes.action.EditNoteIntentionAction</className>
-        </intentionAction>
-        <intentionAction >
-            <className>com.theblind.privatenotes.action.DeleteNoteIntentionAction</className>
-        </intentionAction>
-        <intentionAction >
-            <className>com.theblind.privatenotes.action.WrapNoteIntentionAction</className>
-        </intentionAction>
-        <intentionAction >
-            <className>com.theblind.privatenotes.action.CopyNoteIntentionAction</className>
+            <className>com.theblind.privatenotes.action.intent.EditNoteIntentionAction</className>
         </intentionAction>
 
         <!--行尾拓展-->
@@ -73,10 +64,58 @@
                 instance="com.theblind.privatenotes.ui.GonfigForm"/>
 
         <psi.treeChangeListener
-                implementation="com.theblind.privatenotes.core.listener.PrivateNotesFileChangeListener"/>
+                implementation="com.theblind.privatenotes.core.listener.PrivateNotesFileChangeListener"/> <!--如下所示添加行标记扩展 -->
+
+
+
     </extensions>
 
     <actions>
+        <group id="Private.Notes" text="私人注释" popup="true"
+               icon="/icon/privateNotes.png">
+            <!--      last  after   first before -->
+            <!--relative-to-action="ReplaceInPath"-->
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </group>
+
+
+        <action class="com.theblind.privatenotes.action.anaction.AddOrEditNoteAnAction"
+                id="Private.Notes.add" description="添加/编辑 私人注释"
+                text="[Note] 添加/编辑">
+            <add-to-group group-id="Private.Notes" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="alt p"/>
+        </action>
+
+        <action class="com.theblind.privatenotes.action.menu.OtherOperateAnAction"
+                id="Private.Notes.Menu.OtherOperate" >
+            <keyboard-shortcut keymap="$default" first-keystroke="alt o"/>
+        </action>
+
+        <group id="Private.Notes.OtherOperate" text="其它操作" popup="true">
+            <add-to-group group-id="Private.Notes" anchor="last"/>
+        </group>
+
+        <action class="com.theblind.privatenotes.action.anaction.DelNoteAnAction"
+                id="Private.Notes.Del" description="添加私人注释"
+                text="[Note] 删除">
+            <add-to-group group-id="Private.Notes.OtherOperate"/>
+        </action>
+        <action class="com.theblind.privatenotes.action.anaction.WrapNoteAnAction"
+                id="Private.Notes.Wrap" description="添加私人注释"
+                text="[Note] 换行">
+            <add-to-group group-id="Private.Notes.OtherOperate"/>
+        </action>
+        <action class="com.theblind.privatenotes.action.anaction.CopyNoteAnAction"
+                id="Private.Notes.Copy" description="添加私人注释"
+                text="[Note] 复制">
+            <add-to-group group-id="Private.Notes.OtherOperate"/>
+        </action>
+
+        <action class="com.theblind.privatenotes.action.anaction.DetailedNoteAnAction"
+                id="Private.Notes.Detailed" description="添加私人注释"
+                text="[Note] 详细">
+            <add-to-group group-id="Private.Notes.OtherOperate"/>
+        </action>
 
 
     </actions>

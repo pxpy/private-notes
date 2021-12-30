@@ -40,6 +40,11 @@ public class Config {
      *标记颜色
      */
     String markColor = "153,153,255,255";
+
+    /**
+     * 最大字符数
+     */
+    Integer maxCharNum=55;
     
 
 
@@ -95,6 +100,14 @@ public class Config {
         this.markColor = markColor;
     }
 
+    public Integer getMaxCharNum() {
+        return maxCharNum;
+    }
+
+    public void setMaxCharNum(Integer maxCharNum) {
+        this.maxCharNum = maxCharNum;
+    }
+
     public static Color asColor(final String color) {
         final String[] rgb = color.split(",");
         return new Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]), Integer.parseInt(rgb[3]));
@@ -103,4 +116,6 @@ public class Config {
     public static String byColor(final Color color) {
         return String.format("%d,%d,%d,%d", color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
+
+
 }

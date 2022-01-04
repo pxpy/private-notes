@@ -44,7 +44,7 @@ public class Config {
     /**
      * 最大字符数
      */
-    Integer maxCharNum=55;
+    Integer maxCharNum=30;
     
 
 

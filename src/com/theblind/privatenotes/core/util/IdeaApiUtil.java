@@ -33,7 +33,10 @@ public class IdeaApiUtil {
     public static JBPopup showComponent(JComponent body, JComponent focusComponent, String title, Icon cancelIcon) {
         ComponentPopupBuilder componentPopupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(body, focusComponent);
         JBPopup popup = componentPopupBuilder.setCancelKeyEnabled(true)
+                .setCancelOnOtherWindowOpen(false)
+                .setCancelOnWindowDeactivation(false)
                 .setTitle(title)
+                .setMinSize(new Dimension(200, 200))
                 .setCancelButton(new IconButton("关闭", cancelIcon))
                 .setResizable(true)
                 .setRequestFocus(true)

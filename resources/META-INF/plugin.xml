@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>TheBlind.privateNotes</id>
     <name>Private Notes</name>
-    <version>1.2</version>
+    <version>1.3</version>
     <vendor email="1043193478@qq.com" url="https://gitee.com/Lovxy">TheBlind</vendor>
 
     <description><![CDATA[
@@ -9,16 +9,36 @@
         You are still afraid to add "sensitive comments" to the project<br/>
         Is the source code a read-only file and can't add comments<br/>
        <li>Anywhere you want to add comments, press <em> Alt + enter </em> mouse out and click to save</li>
-       <li>There are private comments. Press <em> Alt + enter </em> to edit and delete them</li>
+       <li>There are private comments. Press <em> Alt + enter </em> to delete them</li>
+       <li><em>Alt + p</em> you can quickly add or edit private notes</li>
+       <li><em>Alt + o</em> show other actions for private notes</li>
+       <li>right click menu<em>private notes</em>view actions</li>
        <br/>
+       <p>synchronous operation</p>
+       <li>The synchronization operation data are cached in the current user directory In the privatenotes folder, if you need to synchronize, you can use the powerful GIT</li>
+       <br/>
+       <a href="https://gitee.com/Lovxy/private-notes">Private Notes 源码和文档</a><br>
        你还在为项目中不敢添加 "敏感注释"!<br/>
        源码是只读文件不能添加注释而烦恼吗？<br/>
        <li>在任何你想加注释的地方 按下<em>Alt + Enter</em>鼠标移出点击即可保存</li>
-       <li>已有私人注释 按下<em>Alt + Enter</em>即可编辑和删除</li>
+       <li>已有私人注释 按下<em>Alt + Enter</em>即可快速编辑</li>
+       <li><em>Alt + p</em> 可快速添加或者编辑私人注释</li>
+       <li><em>Alt + o</em> 展示私人注释的其它操作</li>
+       <li>右键菜单<em>私人注释</em>查看操作</li>
+       <br/>
+       <p>同步操作</p>
+       <li>数据都缓存当前用户目录下的 .privateNotes文件夹中,如需同步，可以借助强大的Git</li>
+       <br/>
        <img src="https://gitee.com/Lovxy/private-notes/raw/master/doc/show.gif"/>
     ]]></description>
 
     <change-notes><![CDATA[
+      <h3>v1.3 update</h3>
+      <ul>
+          <li>update operation</li>
+          <li>add shortcut keys</li>
+          <li>add right click menu</li>
+      </ul>
       <h3>v1.2 update</h3>
       <ul>
           <li>fix bug</li>
@@ -64,8 +84,7 @@
                 instance="com.theblind.privatenotes.ui.GonfigForm"/>
 
         <psi.treeChangeListener
-                implementation="com.theblind.privatenotes.core.listener.PrivateNotesFileChangeListener"/> <!--如下所示添加行标记扩展 -->
-
+                implementation="com.theblind.privatenotes.core.listener.PrivateNotesFileChangeListener"/>
 
 
     </extensions>
@@ -87,7 +106,7 @@
         </action>
 
         <action class="com.theblind.privatenotes.action.menu.OtherOperateAnAction"
-                id="Private.Notes.Menu.OtherOperate" >
+                id="Private.Notes.Menu.OtherOperate">
             <keyboard-shortcut keymap="$default" first-keystroke="alt o"/>
         </action>
 

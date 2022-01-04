@@ -16,7 +16,11 @@ import com.theblind.privatenotes.ui.TextBox;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class ActionHandle {
 
@@ -66,12 +70,18 @@ public abstract class ActionHandle {
 
     public static class AddActionHandle extends ActionHandle {
 
+        static AtomicBoolean OPEN = new AtomicBoolean(false);
+
         public AddActionHandle() {
             super(Operate.ADD);
         }
 
         @Override
         public void execute(@NotNull Project project, Editor editor, VirtualFile virtualFile) {
+            if (OPEN.get()) {
+                return;
+            }
+            OPEN.set(true);
             PrivateNotesEditorForm remarkEditor = new PrivateNotesEditorForm();
             JScrollPane scrollPane = remarkEditor.getScrollPane();
             JEditorPane editorPane = remarkEditor.getEditorPane1();
@@ -80,6 +90,7 @@ public abstract class ActionHandle {
                 @Override
                 public void onClosed(@NotNull LightweightWindowEvent event) {
                     try {
+                        OPEN.set(false);
                         noteFileService.saveNote(virtualFile.getCanonicalPath(), selLineNumber
                                 , editorPane.getText(), IdeaApiUtil.getBytes(virtualFile));
                     } catch (Exception e) {
@@ -87,19 +98,24 @@ public abstract class ActionHandle {
                     }
                 }
             }, editor);
+
             editorPane.requestFocus();
         }
     }
 
 
     public static class EditActionHandle extends ActionHandle {
-
+        static AtomicBoolean OPEN = new AtomicBoolean(false);
         public EditActionHandle() {
             super(Operate.EDIT);
         }
 
         @Override
         public void execute(@NotNull Project project, Editor editor, VirtualFile virtualFile) {
+            if (OPEN.get()) {
+                return;
+            }
+            OPEN.set(true);
             PrivateNotesEditorForm remarkEditor = new PrivateNotesEditorForm();
             JScrollPane scrollPane = remarkEditor.getScrollPane();
             JEditorPane editorPane = remarkEditor.getEditorPane1();
@@ -116,6 +132,7 @@ public abstract class ActionHandle {
                 @Override
                 public void onClosed(@NotNull LightweightWindowEvent event) {
                     try {
+                        OPEN.set(false);
                         noteFileService.saveNote(virtualFile.getCanonicalPath(),
                                 selLineNumber, editorPane.getText(), IdeaApiUtil.getBytes(virtualFile));
                     } catch (Exception e) {
@@ -123,7 +140,8 @@ public abstract class ActionHandle {
                     }
                 }
             }, editor);
-            //editorPane.requestFocus();
+
+            editorPane.requestFocus();
             remarkEditor.top();
 
         }
@@ -161,6 +179,7 @@ public abstract class ActionHandle {
                 }
             });
             editorPane1.setEditable(false);
+            textBox.getPanel().setMinimumSize(new Dimension(200, 200));
             IdeaApiUtil.showComponent(  String.format("[Note] %s %s行",virtualFile.getName(),selLineNumber),textBox.getPanel(), editorPane1,editor, IconLoader.findIcon("/icon/close.png"));
 
         }

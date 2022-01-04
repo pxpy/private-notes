@@ -34,6 +34,8 @@ public class TextBox {
         refresh.setBorder(null);
         nav.setContentAreaFilled(false);//设置按钮透明
         refresh.setContentAreaFilled(false);//设置按钮透明
+
+
     }
 
     public JEditorPane getEditorPane1() {

@@ -10,10 +10,15 @@ import com.theblind.privatenotes.action.ActionHandle;
 import com.theblind.privatenotes.action.ActionHandleFactory;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class AddOrEditNoteAnAction extends AnAction {
+
+
 
     ActionHandle addHandle;
     ActionHandle editHandle;
+
 
 
     public AddOrEditNoteAnAction() {
@@ -23,6 +28,7 @@ public class AddOrEditNoteAnAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
+
         Project project = CommonDataKeys.PROJECT.getData(anActionEvent.getDataContext());
         Editor editor = CommonDataKeys.EDITOR.getData(anActionEvent.getDataContext());
         VirtualFile virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(anActionEvent.getDataContext());

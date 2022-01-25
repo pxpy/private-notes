@@ -35,13 +35,18 @@ public interface NoteFileService {
 
     void delNote(File file, int lineNumber, Object... params) throws Exception;
 
-    void delNoteFile(NoteFile noteFile)throws Exception;
+    void delNoteFile(NoteFile noteFile) throws Exception;
 
     void loadCache(String path, Object... params) throws Exception;
 
     void removeCache(String path, Object... params) throws Exception;
 
-    void wrapNote(String path, int lineNumber,  Object... params)throws Exception;
+    void wrapDownNote(String path, int lineNumber, Object... params) throws Exception;
+
+    void continueToWrapDown(String path, int lineNumber, int wrapCount, Object... params) throws Exception;
+
+    void continueToWrapUp(String path, int lineNumber, int wrapCount,Object... params) throws Exception;
+
 
     void updateVersion(String path, Object... params) throws Exception;
 

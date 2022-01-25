@@ -5,6 +5,7 @@ import cn.hutool.cache.impl.LRUCache;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileReader;
 import cn.hutool.core.io.file.FileWriter;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.MD5;
 import cn.hutool.json.JSONUtil;
@@ -14,15 +15,14 @@ import com.theblind.privatenotes.core.NoteFile;
 import com.theblind.privatenotes.core.PrivateNotesFactory;
 import com.theblind.privatenotes.core.service.ConfigService;
 import com.theblind.privatenotes.core.service.NoteFileService;
+import com.theblind.privatenotes.core.util.IdeaApiUtil;
 import com.theblind.privatenotes.core.util.JsonUtil;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class NoteFileServiceImpl implements NoteFileService {
 
@@ -222,12 +222,50 @@ public class NoteFileServiceImpl implements NoteFileService {
 
     }
 
+
     @Override
-    public void wrapNote(String path, int lineNumber, Object... params) throws Exception {
+    public void wrapDownNote(String path, int lineNumber, Object... params) throws Exception {
+        updateNoteLineNumber(path, lineNumber, ++lineNumber, params);
+    }
+
+
+    @Override
+    public void continueToWrapDown(String path, int lineNumber, int wrapCount,Object... params) throws Exception {
+        NoteFile noteFile = get(path, params);
+        Map<Integer, String> notes = noteFile.getNotes();
+
+        TreeMap<Integer, String> sort = MapUtil.sort(notes, (k1, k2) ->k2-k1);
+        SortedMap<Integer, String> integerStringSortedMap = sort.subMap(sort.firstKey(),lineNumber-1);
+        integerStringSortedMap.forEach((k, v) -> {
+            notes.remove(k);
+            k+=wrapCount;
+            notes.put(k, v);
+        });
+        saveNote(noteFile);
+    }
+
+    @Override
+    public void continueToWrapUp(String path, int lineNumber, int wrapCount, Object... params) throws Exception {
+        NoteFile noteFile = get(path, params);
+        Map<Integer, String> notes = noteFile.getNotes();
+        TreeMap<Integer, String> sort = MapUtil.sort(notes);
+        SortedMap<Integer, String> integerStringSortedMap = sort.subMap(lineNumber,sort.lastKey()+1);
+        integerStringSortedMap.forEach((k, v) -> {
+            notes.remove(k);
+            k-=wrapCount;
+            notes.put(k, v);
+        });
+        saveNote(noteFile);
+    }
+
+
+
+    public void updateNoteLineNumber(String path, int lineNumber, int newLineNumber, Object... params) throws Exception {
         NoteFile noteFile = get(path, params);
         String node = noteFile.getNode(lineNumber);
+
         noteFile.removeNode(lineNumber);
-        noteFile.setNode(++lineNumber, node);
+        noteFile.setNode(newLineNumber, node);
         saveNote(noteFile);
     }
 

@@ -62,6 +62,7 @@ public class IdeaApiUtil {
     }
 
     public static Integer getSelLineNumber(@NotNull Editor editor) {
+
         return editor.getDocument().getLineNumber(editor.getCaretModel().getOffset());
     }
 

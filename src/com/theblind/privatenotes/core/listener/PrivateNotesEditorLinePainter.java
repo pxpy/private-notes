@@ -30,7 +30,6 @@ public class PrivateNotesEditorLinePainter extends EditorLinePainter {
     NoteFileService noteFileService = PrivateNotesFactory.getNoteFileService();
     ConfigService configService = PrivateNotesFactory.getConfigService();
 
-    TimedCache<String, Object> timedCache = CacheUtil.newTimedCache(60 * 1000);
 
     @Nullable
     @Override
@@ -44,8 +43,8 @@ public class PrivateNotesEditorLinePainter extends EditorLinePainter {
                 return null;
             }
             Integer maxCharNum = config.getMaxCharNum();
-            if (note.length()>maxCharNum) {
-                note = StrUtil.builder().append(note, 0, maxCharNum ).append("...").toString();
+            if (note.length() > maxCharNum) {
+                note = StrUtil.builder().append(note, 0, maxCharNum).append("...").toString();
             }
 
             result.add(new LineExtensionInfo(String.format(" %s ", config.getMark()),
@@ -54,11 +53,7 @@ public class PrivateNotesEditorLinePainter extends EditorLinePainter {
                     new TextAttributes(null, null, Config.asColor(config.getNoteColor()), null, Font.PLAIN)));
             return result;
         } catch (Exception e) {
-            //防止异常被 重复输出
-            if (!timedCache.containsKey(virtualFile.getPath())) {
-                timedCache.put(virtualFile.getPath(), null);
-                PrivateNotesUtil.errLog(e, project);
-            }
+            PrivateNotesUtil.errLog(e, project);
         }
         return null;
     }

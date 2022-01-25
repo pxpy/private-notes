@@ -1,5 +1,6 @@
 package com.theblind.privatenotes.action;
 
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
@@ -18,8 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class ActionHandle {
@@ -233,7 +232,7 @@ public abstract class ActionHandle {
             Integer selLineNumber = IdeaApiUtil.getSelLineNumber(editor);
 
             try {
-                noteFileService.wrapNote(virtualFile.getCanonicalPath(), selLineNumber
+                noteFileService.wrapDownNote(virtualFile.getCanonicalPath(), selLineNumber
                         , IdeaApiUtil.getBytes(virtualFile));
             } catch (Exception e) {
                 PrivateNotesUtil.errLog(e, project);

@@ -53,9 +53,10 @@ public class GonfigForm implements SearchableConfigurable {
         //设置颜色选择监听
         IdeaApiUtil.chooseColorListener(mainPane,noteLabSel);
         IdeaApiUtil.chooseColorListener(mainPane,markLabSel);
-        maxCharNum.setValue(config.getMaxCharNum());
-        maxCharNum.setModel(new SpinnerNumberModel());
-
+        //修复 #I4SIB4
+        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel();
+        spinnerNumberModel.setValue(config.getMaxCharNum());
+        maxCharNum.setModel(spinnerNumberModel);
         markText.getDocument().addDocumentListener(new DocumentListener() {
 
             void updatePreview() {

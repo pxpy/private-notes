@@ -55,6 +55,7 @@ public class IdeaApiUtil {
         JBPopupFactory popupFactory = JBPopupFactory.getInstance();
         Balloon balloon = popupFactory.createDialogBalloonBuilder(jComponent, title)
                 .setHideOnClickOutside(hideOnClickOutside)
+                .setHideOnKeyOutside(true)
                 .setDialogMode(dialogMode)
                 .createBalloon();
         balloon.addListener(jbPopupListener);

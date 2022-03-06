@@ -168,6 +168,7 @@ public abstract class ActionHandle {
             }
 
             textBox.getNav().addActionListener(event -> IdeaApiUtil.to(project,virtualFile,selLineNumber));
+
             textBox.getRefresh().addActionListener(event ->{
                 try {
                     editorPane1.setText(noteFileService.getNote(virtualFile.getCanonicalPath(),
@@ -177,7 +178,10 @@ public abstract class ActionHandle {
                     PrivateNotesUtil.errLog(e, project);
                 }
             });
+
             editorPane1.setEditable(false);
+            editorPane1.setSelectionStart(0);
+            editorPane1.setSelectionEnd(0);
             textBox.getPanel().setMinimumSize(new Dimension(200, 200));
             IdeaApiUtil.showComponent(  String.format("[Note] %s %s行",virtualFile.getName(),selLineNumber),textBox.getPanel(), editorPane1,editor, IconLoader.findIcon("/icon/close.png"));
 

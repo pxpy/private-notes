@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>TheBlind.privateNotes</id>
     <name>Private Notes</name>
-    <version>1.4</version>
+    <version>1.4.2</version>
     <vendor email="1043193478@qq.com" url="https://gitee.com/Lovxy">TheBlind</vendor>
 
     <description><![CDATA[
@@ -33,6 +33,15 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <h3>v1.4.2 update</h3>
+      <ul>
+          <li>add esc key to close balloon</li>
+          <li>fix some bugs</li>
+      </ul>
+      <h3>v1.4.1 update</h3>
+      <ul>
+          <li>fix some bugs</li>
+      </ul>
       <h3>v1.4 update</h3>
       <ul>
           <li>auto wrap</li>

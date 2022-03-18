@@ -9,6 +9,7 @@ import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.MD5;
 import cn.hutool.json.JSONUtil;
+import com.intellij.openapi.diagnostic.LogUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.theblind.privatenotes.core.Config;
 import com.theblind.privatenotes.core.NoteFile;
@@ -17,6 +18,7 @@ import com.theblind.privatenotes.core.service.ConfigService;
 import com.theblind.privatenotes.core.service.NoteFileService;
 import com.theblind.privatenotes.core.util.IdeaApiUtil;
 import com.theblind.privatenotes.core.util.JsonUtil;
+import com.theblind.privatenotes.core.util.PrivateNotesUtil;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -137,13 +139,12 @@ public class NoteFileServiceImpl implements NoteFileService {
     public void saveNote(NoteFile noteFile) throws Exception {
         Config config = configService.get();
 
-        if (StringUtil.isEmpty(config.getUser())) {
-            File file = getAbsolutePath(config, noteFile).toFile();
-            // 创建文件
-            FileUtil.touch(file);
-            FileWriter fileWriter = new FileWriter(file);
-            fileWriter.write(JsonUtil.toJson(noteFile));
-        }
+        File file = getAbsolutePath(config, noteFile).toFile();
+        // 创建文件
+        FileUtil.touch(file);
+        FileWriter fileWriter = new FileWriter(file);
+        fileWriter.write(JsonUtil.toJson(noteFile));
+
     }
 
 
@@ -230,15 +231,15 @@ public class NoteFileServiceImpl implements NoteFileService {
 
 
     @Override
-    public void continueToWrapDown(String path, int lineNumber, int wrapCount,Object... params) throws Exception {
+    public void continueToWrapDown(String path, int lineNumber, int wrapCount, Object... params) throws Exception {
         NoteFile noteFile = get(path, params);
         Map<Integer, String> notes = noteFile.getNotes();
 
-        TreeMap<Integer, String> sort = MapUtil.sort(notes, (k1, k2) ->k2-k1);
-        SortedMap<Integer, String> integerStringSortedMap = sort.subMap(sort.firstKey(),lineNumber-1);
+        TreeMap<Integer, String> sort = MapUtil.sort(notes, (k1, k2) -> k2 - k1);
+        SortedMap<Integer, String> integerStringSortedMap = sort.subMap(sort.firstKey(), lineNumber - 1);
         integerStringSortedMap.forEach((k, v) -> {
             notes.remove(k);
-            k+=wrapCount;
+            k += wrapCount;
             notes.put(k, v);
         });
         saveNote(noteFile);
@@ -249,15 +250,14 @@ public class NoteFileServiceImpl implements NoteFileService {
         NoteFile noteFile = get(path, params);
         Map<Integer, String> notes = noteFile.getNotes();
         TreeMap<Integer, String> sort = MapUtil.sort(notes);
-        SortedMap<Integer, String> integerStringSortedMap = sort.subMap(lineNumber,sort.lastKey()+1);
+        SortedMap<Integer, String> integerStringSortedMap = sort.subMap(lineNumber, sort.lastKey() + 1);
         integerStringSortedMap.forEach((k, v) -> {
             notes.remove(k);
-            k-=wrapCount;
+            k -= wrapCount;
             notes.put(k, v);
         });
         saveNote(noteFile);
     }
-
 
 
     public void updateNoteLineNumber(String path, int lineNumber, int newLineNumber, Object... params) throws Exception {

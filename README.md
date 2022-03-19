@@ -35,4 +35,7 @@
 将项目导入idea中,并上传到gitee或者github中
 [将项目首次导入到 gitee中](https://blog.csdn.net/qq_40495860/article/details/102722894)
 
+当你完成第一次上传时,即可使用右键 **私人注释** 中的Git操作 完成快速的 Pull和CommitAndPush操作
+<br/>
+**注意**：必须 使用Git命令或者Idea 完成第一次提交
 

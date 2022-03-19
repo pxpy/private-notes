@@ -16,6 +16,7 @@
        <br/>
        <p>synchronous operation</p>
        <li>The synchronization operation data are cached in the current user directory In the privatenotes folder, if you need to synchronize, you can use the powerful GIT</li>
+       <li>Right-click private comments to use common Git commands</li>
        <br/>
        <a href="https://gitee.com/Lovxy/private-notes">Private Notes 源码和文档</a><br>
        你还在为项目中不敢添加 "敏感注释"!<br/>
@@ -27,12 +28,18 @@
        <li>右键菜单<em>私人注释</em>查看操作</li>
        <br/>
        <p>同步操作</p>
-       <li>数据都缓存当前用户目录下的 .privateNotes文件夹中,如需同步，可以借助强大的Git</li>
+       <li> 数据都缓存当前用户目录下的 .privateNotes文件夹中,如需同步，可以借助强大的Git</li>
+       <li> 右键私人注释 可使用常用Git命令</li>
        <br/>
        <img src="https://gitee.com/Lovxy/private-notes/raw/master/doc/show.gif"/>
     ]]></description>
 
     <change-notes><![CDATA[
+      <h3>v1.5 update</h3>
+      <ul>
+          <li>fix some bugs</li>
+          <li>add Git operate</li>
+      </ul>
       <h3>v1.4.2 update</h3>
       <ul>
           <li>add esc key to close balloon</li>

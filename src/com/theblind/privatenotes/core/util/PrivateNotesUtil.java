@@ -37,4 +37,35 @@ public class PrivateNotesUtil {
 
     }
 
+
+    public static void errLog(String message, Project project) {
+            try {
+                IdeaApiUtil.showErrNotification(message, project);
+            } catch (Exception e) {
+                //throw new RuntimeException(e);
+            }
+    }
+
+
+    public static void errLog(String message) {
+        errLog(message, null);
+    }
+
+    public static void infoLog(String message, Project project) {
+        if (!timedCache.containsKey(message)) {
+            timedCache.put(message, null);
+            try {
+                IdeaApiUtil.showInfoNotification(message, project);
+            } catch (Exception e) {
+                //throw new RuntimeException(e);
+            }
+        }
+
+    }
+
+    public static void infoLog(String message) {
+        infoLog(message, null);
+
+    }
+
 }

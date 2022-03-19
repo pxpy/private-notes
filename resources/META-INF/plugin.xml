@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>TheBlind.privateNotes</id>
     <name>Private Notes</name>
-    <version>1.4.2</version>
+    <version>1.5</version>
     <vendor email="1043193478@qq.com" url="https://gitee.com/Lovxy">TheBlind</vendor>
 
     <description><![CDATA[
@@ -113,6 +113,8 @@
         </group>
 
 
+
+
         <action class="com.theblind.privatenotes.action.anaction.AddOrEditNoteAnAction"
                 id="Private.Notes.add" description="添加/编辑 私人注释"
                 text="[Note] 添加/编辑">
@@ -125,6 +127,24 @@
             <keyboard-shortcut keymap="$default" first-keystroke="alt o"/>
         </action>
 
+
+        <!--                             Git                          -->
+        <group id="Private.Notes.Git" text="Git" popup="true">
+            <add-to-group group-id="Private.Notes" />
+        </group>
+        <action class="com.theblind.privatenotes.action.anaction.GitPullAnAction"
+                id="Private.Notes.Git.Pull" description="Pull"
+                text="[Note] Pull">
+            <add-to-group group-id="Private.Notes.Git"/>
+        </action>
+        <action class="com.theblind.privatenotes.action.anaction.GitPushAnAction"
+                id="Private.Notes.Git.CommitAndPush" description="CommitAndPush"
+                text="[Note] CommitAndPush">
+            <add-to-group group-id="Private.Notes.Git"/>
+        </action>
+
+
+        <!--                             其它操作                          -->
         <group id="Private.Notes.OtherOperate" text="其它操作" popup="true">
             <add-to-group group-id="Private.Notes" anchor="last"/>
         </group>

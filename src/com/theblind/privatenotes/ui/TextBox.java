@@ -1,15 +1,9 @@
 package com.theblind.privatenotes.ui;
 
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.theblind.privatenotes.core.util.IdeaApiUtil;
-import com.theblind.privatenotes.core.util.PrivateNotesUtil;
 
 import javax.swing.*;
 import java.awt.*;
-
 
 public class TextBox {
     private JEditorPane editorPane1;
@@ -23,13 +17,12 @@ public class TextBox {
     public TextBox(Project project, com.intellij.openapi.vfs.VirtualFile mapperFile, Integer lineNumber) {
         panel.setPreferredSize(new Dimension(400, 180));
         panel.setBorder(null);
-       // panel.setBorder(new RoundBorder());
+        // panel.setBorder(new RoundBorder());
 
         scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scroll.setBorder(null);
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-        editorPane1.setBorder(null);
+        editorPane1.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
         nav.setBorder(null);
         refresh.setBorder(null);
@@ -62,4 +55,7 @@ public class TextBox {
         return refresh;
     }
 
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+    }
 }

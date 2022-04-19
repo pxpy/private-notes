@@ -39,9 +39,7 @@ public class GitUtil {
         command.add("-m");
         command.add(" private notes 添加");
         boolean executeCmd = executeCmd(directory, command, (errMsg) -> {
-            //System.out.println("commit"+errMsg);
             PrivateNotesUtil.errLog("commit  errMsg: " + errMsg);
-
         });
         return executeCmd;
     }
@@ -71,7 +69,7 @@ public class GitUtil {
     }
 
 
-    public static void pull(String directory) throws Exception {
+    public static boolean pull(String directory) throws Exception {
         List<String> command = new ArrayList<>(2);
         command.add("git");
         command.add("pull");
@@ -79,12 +77,13 @@ public class GitUtil {
             if (errMsg.startsWith("fatal") && errMsg.endsWith(".git\n")) {
                 PrivateNotesUtil.errLog("pull 执行失败,没有找到git repository,请先将存储在用户目录下的.PrivateNotes 文件导入到Idea中完成Git仓库创建 \n或者 使用Git命令创建仓库\n详细操作: https://gitee.com/Lovxy/private-notes");
             } else {
-                PrivateNotesUtil.errLog("pull errMsg: "+errMsg);
+                PrivateNotesUtil.errLog("pull errMsg: " + errMsg);
             }
         });
         if (executeCmd) {
             PrivateNotesUtil.infoLog("pull 执行成功");
         }
+        return executeCmd;
     }
 
     private static boolean executeCmd(String directory, List<String> cmd, Consumer<String> errHandle) throws Exception {
@@ -106,13 +105,13 @@ public class GitUtil {
 
     public static String getUtf8String(byte[] bytes) throws UnsupportedEncodingException {
 
-            String encode ="GBK";
-            boolean pdUtf = false;
-            pdUtf = validUtf8(bytes);
-            if (pdUtf) {
-                encode = String.valueOf(StandardCharsets.UTF_8);
-            }
-            return new String(bytes, encode);
+        String encode = "GBK";
+        boolean pdUtf = false;
+        pdUtf = validUtf8(bytes);
+        if (pdUtf) {
+            encode = String.valueOf(StandardCharsets.UTF_8);
+        }
+        return new String(bytes, encode);
 
     }
 

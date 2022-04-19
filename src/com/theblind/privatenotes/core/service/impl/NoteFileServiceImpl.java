@@ -20,11 +20,14 @@ import com.theblind.privatenotes.core.util.IdeaApiUtil;
 import com.theblind.privatenotes.core.util.JsonUtil;
 import com.theblind.privatenotes.core.util.PrivateNotesUtil;
 
+import javax.xml.crypto.Data;
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class NoteFileServiceImpl implements NoteFileService {
 
@@ -220,7 +223,6 @@ public class NoteFileServiceImpl implements NoteFileService {
     @Override
     public void removeCache(String path, Object... params) {
 
-
     }
 
 
@@ -302,6 +304,18 @@ public class NoteFileServiceImpl implements NoteFileService {
         oldStorage.renameTo(nowStorageFile);
     }
 
+    @Override
+    public void removeCache(long lastTime) {
+        Config config = configService.get();
+        String userSavePath = config.getUserSavePath();
+        noteFileCache.keySet().stream().filter((noteFileName -> {
+            String noteFilePath = userSavePath + File.separator + noteFileName;
+            File noteFile = FileUtil.file(noteFilePath);
+            return noteFile.lastModified() > lastTime;
+        })).collect(Collectors.toList()).forEach((removeFileName) -> {
+            noteFileCache.remove(removeFileName);
+        });
+    }
 
     public Path getAbsolutePath(Config config, NoteFile noteFile) {
         String ruleName = fileNamingRules(noteFile);

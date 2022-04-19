@@ -56,4 +56,6 @@ public interface NoteFileService {
 
     String generateVersionByCache(Object... params) throws Exception;
 
+    void removeCache(long lastTime);
+
 }

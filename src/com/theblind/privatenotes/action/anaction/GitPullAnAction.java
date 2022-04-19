@@ -4,18 +4,18 @@ import cn.hutool.core.thread.ThreadUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.theblind.privatenotes.core.Config;
 import com.theblind.privatenotes.core.PrivateNotesFactory;
 import com.theblind.privatenotes.core.service.ConfigService;
+import com.theblind.privatenotes.core.service.NoteFileService;
 import com.theblind.privatenotes.core.util.GitUtil;
 import com.theblind.privatenotes.core.util.PrivateNotesUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class GitPullAnAction extends AnAction {
 
+    NoteFileService noteFileService = PrivateNotesFactory.getNoteFileService();
     ConfigService configService = PrivateNotesFactory.getConfigService();
 
     public void update(@NotNull AnActionEvent anActionEvent) {
@@ -29,7 +29,9 @@ public class GitPullAnAction extends AnAction {
         Config config = configService.get();
         ThreadUtil.execute(() -> {
             try {
+                long lastTime = System.currentTimeMillis();
                 GitUtil.pull(config.getUserSavePath());
+                noteFileService.removeCache(lastTime);
             } catch (Exception e) {
                 PrivateNotesUtil.errLog(e, project);
             }
